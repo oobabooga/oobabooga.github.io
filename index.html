@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> oobabooga.github.io </title>
+    <style>
+        body {
+            background-color:black;
+            margin:0;
+            padding: 20px;
+            font-family: Helvetica, sans-serif;
+            color: white;
+        }
+        .wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        a {
+            text-decoration: none;
+            font-family: sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00ffff;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        a:hover {
+            color: #f4f4f4;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size:2rem;
+            }
+            a {
+                font-size: 1rem;
+            }
+        }
+        .image-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          margin-top: 40px;
+          margin-bottom: 40px;
+        }
+        
+        /* Style for the subtitle */
+        .subtitle {
+          font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>oobabooga.github.io</h1>
+        <p><a href="https://github.com/oobabooga/text-generation-webui" target="_blank">https://github.com/oobabooga/text-generation-webui</a></p>
+        <p><a href="http://127.0.0.1:7860?__theme=dark" target="_blank">http://127.0.0.1:7860?__theme=dark</a></p>
+        <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'B0B5JFPBO');kofiwidget2.draw();</script> 
+
+        <div class="image-container">
+          <img src="/welcome.png" alt="Welcome Image" style="max-width: 100%">
+          <p class="subtitle">Generated with ggml-vicuna-13B-1.1-q4_0.bin (CPU)</p>
+        </div>
+
+
+    </div>
+</body>
+</html>

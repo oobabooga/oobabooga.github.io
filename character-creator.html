@@ -1,0 +1,135 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JSON character creator</title>
+<style>
+body {
+  font-family: 'Roboto', sans-serif;
+  padding: 40px;
+  color: #333;
+  max-width: 665px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #f7f7f7;
+}
+
+p { 
+  font-size: 16px;
+  color: #1a1a1a;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+textarea {
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 15px;
+  border-width: 1px;
+  max-width: 665px;
+  width:100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+input {
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 5px;
+  border-width: 1px;
+  background-color: #ffffff;
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  text-align: center;
+  margin: 10px;
+}
+
+input:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+}
+
+button {
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 5px;
+  border-width: 1px;
+  background-color: #007bff;
+  color: #ffffff;
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+button:hover {
+  background-color: #0069d9;
+}
+
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+
+<body>
+    <h2>JSON character creator</h2>
+    <p>Enter your character settings and click on "Download JSON" to generate a JSON file.</p>
+    <p>To use it, place it in the "characters" folder of the <a href="https://github.com/oobabooga/text-generation-webui">web UI</a> or upload it directly in the interface.</p>
+    <p>This script runs locally on your computer, so your character data is not sent to any server.</p>
+    <p>You can share your JSON with other people using <a href="https://catbox.moe/">catbox</a>.</p>
+    <br/>
+    <form action="">
+        <p>Character Name:</p>
+        <textarea name="char_name" rows="2">Chiharu Yamada</textarea>
+        <p>Character Persona:</p>
+        <textarea name="char_persona" rows="10">Chiharu Yamada is a young, computer engineer-nerd with a knack for problem solving and a passion for technology.</textarea>
+        <p>Character Greeting:</p>
+        <textarea name="char_greeting" rows="10">*Chiharu strides into the room with a smile, her eyes lighting up when she sees you. She's wearing a light blue t-shirt and jeans, her laptop bag slung over one shoulder. She takes a seat next to you, her enthusiasm palpable in the air*
+
+Hey! I'm so excited to finally meet you. I've heard so many great things about you and I'm eager to pick your brain about computers. I'm sure you have a wealth of knowledge that I can learn from. *She grins, eyes twinkling with excitement* Let's get started!</textarea>
+        <p>World Scenario:</p>
+        <textarea name="world_scenario" rows="10"></textarea>
+        <p>Example Dialogue:</p>
+        <textarea name="example_dialogue" rows="20">{{user}}: So how did you get into computer engineering?
+{{char}}: I've always loved tinkering with technology since I was a kid.
+{{user}}: That's really impressive!
+{{char}}: *She chuckles bashfully* Thanks!
+{{user}}: So what do you do when you're not working on computers?
+{{char}}: I love exploring, going out with friends, watching movies, and playing video games.
+{{user}}: What's your favorite type of computer hardware to work with?
+{{char}}: Motherboards, they're like puzzles and the backbone of any system.
+{{user}}: That sounds great!
+{{char}}: Yeah, it's really fun. I'm lucky to be able to do this as a job.</textarea>
+        <br/>
+        <br/>
+        <div style="text-align: center">
+        <input type="submit" value="Download JSON">
+        </div>
+    </form>
+    <p>Output:</p>
+    <textarea id="output" rows="10"></textarea>
+        <br/>
+        <br/>
+    <script>
+        document.querySelector('form').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            let output = {
+                char_name: document.querySelector('[name="char_name"]').value,
+                char_persona: document.querySelector('[name="char_persona"]').value,
+                char_greeting: document.querySelector('[name="char_greeting"]').value,
+                world_scenario: document.querySelector('[name="world_scenario"]').value,
+                example_dialogue: document.querySelector('[name="example_dialogue"]').value
+            };
+            var output_json = JSON.stringify(output);
+            document.querySelector('#output').value = output_json;
+
+            var filename = document.querySelector('[name="char_name"]').value + ".json";
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(output_json));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+
+        });
+    </script>
+</body>
+
+</html>
