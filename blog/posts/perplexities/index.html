@@ -382,6 +382,7 @@
     }
 </style>
 <h1 id="a-direct-comparison-between-llamacpp-autogptq-exllama-and-transformers-perplexities">A direct comparison between llama.cpp, AutoGPTQ, ExLlama, and transformers perplexities</h1>
+<p><b>Update: I added tests with 128g + desc_act using ExLlama. They are marked with (new)</b></p>
 <p>After learning that I could get 1-2 tokens/second for llama-65b on my computer using llama.cpp, I became curious to measure its accuracy. How does it compare to GPTQ?</p>
 <p>This led to further questions:</p>
 <ul>
@@ -468,6 +469,11 @@
 <td align="left">transformers with <code>--load-in-4bit</code></td>
 </tr>
 <tr>
+<td align="left">Neko-Institute-of-Science_LLaMA-13B-4bit-128g <strong>(new, with desc_act)</strong></td>
+<td align="right">5.74437</td>
+<td align="left">ExLlama</td>
+</tr>
+<tr>
 <td align="left">galactica-30b-4bit-128g</td>
 <td align="right">6.07812</td>
 <td align="left">AutoGPTQ</td>
@@ -491,6 +497,11 @@
 <td align="left">llama-7b.ggmlv3.q4_K_M.bin</td>
 <td align="right">6.26391</td>
 <td align="left">llama.cpp</td>
+</tr>
+<tr>
+<td align="left">Neko-Institute-of-Science_LLaMA-7B-4bit-128g <strong>(new, with desc_act)</strong></td>
+<td align="right">6.28790</td>
+<td align="left">ExLlama</td>
 </tr>
 <tr>
 <td align="left">llama-7b-4bit</td>
@@ -538,6 +549,11 @@
 <td align="left">llama-13b.ggmlv3.q4_K_M.bin</td>
 <td align="right">4.58748</td>
 <td align="left">llama.cpp</td>
+</tr>
+<tr>
+<td align="left">Neko-Institute-of-Science_LLaMA-13B-4bit-128g <strong>(new, with desc_act)</strong></td>
+<td align="right">4.601023</td>
+<td align="left">ExLlama</td>
 </tr>
 <tr>
 <td align="left">llama-13b</td>
