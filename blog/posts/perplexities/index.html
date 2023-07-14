@@ -382,8 +382,9 @@
     }
 </style>
 <h1 id="a-direct-comparison-between-llamacpp-autogptq-exllama-and-transformers-perplexities">A direct comparison between llama.cpp, AutoGPTQ, ExLlama, and transformers perplexities</h1>
-<p><strong>Update: I added tests with 128g + desc_act using ExLlama. They are marked with (new)</strong></p>
+<p><strong>Update 1: I added tests with 128g + desc_act using ExLlama. They are marked with (new)</strong></p>
 <p><strong>Update 2: also added a test for 30b with 128g + desc_act using ExLlama.</strong></p>
+<p><strong>Update 3: the takeaway messages have been updated in light of the latest data.</strong></p>
 <p>After learning that I could get 1-2 tokens/second for llama-65b on my computer using llama.cpp, I became curious to measure its accuracy. How does it compare to GPTQ?</p>
 <p>This led to further questions:</p>
 <ul>
@@ -583,7 +584,8 @@
 <li>For 13b and 30b, llama.cpp q4_K_M wins.</li>
 <li>The perplexity of llama-65b in llama.cpp is indeed lower than for llama-30b in all other backends.</li>
 <li>For 7b and 13b, ExLlama is as accurate as AutoGPTQ (a tiny bit lower actually), confirming that its GPTQ reimplementation has been successful. </li>
-<li>The bitsandbytes <code>load_in_4bit</code> is more accurate than GPTQ in 3/4 of cases. In the only case where it doesn't win, the difference is small (5.73047   vs 5.72581).</li>
+<li><strong>(updated)</strong> For GPTQ, you should be using models with groupsize AND desc_act on ExLlama unless you have a specific reason to use something else.</li>
+<li><strong>(updated)</strong> bitsandbytes <code>load_in_4bit</code> vs GPTQ + desc_act: <code>load_in_4bit</code> wins in 3 out of 4 tests, but the difference is not big.</li>
 </ul>
 <hr />
 <div style="background-color: #f2f2f2; border-radius: 10px; padding: 30px; width: 400px; text-align: center; margin-left: auto; margin-right: auto; margin-top: 50px">
