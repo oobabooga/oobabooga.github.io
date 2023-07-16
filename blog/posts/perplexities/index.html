@@ -385,6 +385,8 @@
 <p><strong>Update 1: I added tests with 128g + desc_act using ExLlama. They are marked with (new)</strong></p>
 <p><strong>Update 2: also added a test for 30b with 128g + desc_act using ExLlama.</strong></p>
 <p><strong>Update 3: the takeaway messages have been updated in light of the latest data.</strong></p>
+<p><strong>Update 4: added llama-65b.ggmlv3.q2_K (2-bit) test with llama.cpp.</strong></p>
+<hr />
 <p>After learning that I could get 1-2 tokens/second for llama-65b on my computer using llama.cpp, I became curious to measure its accuracy. How does it compare to GPTQ?</p>
 <p>This led to further questions:</p>
 <ul>
@@ -449,6 +451,11 @@
 <td align="left">llama-30b-4bit-128g</td>
 <td align="right">5.30078</td>
 <td align="left">AutoGPTQ</td>
+</tr>
+<tr>
+<td align="left">llama-65b.ggmlv3.q2_K.bin</td>
+<td align="right">5.44745</td>
+<td align="left">llama.cpp</td>
 </tr>
 <tr>
 <td align="left">llama-13b.ggmlv3.q4_K_M.bin</td>
@@ -559,7 +566,7 @@
 </tr>
 <tr>
 <td align="left">Neko-Institute-of-Science_LLaMA-13B-4bit-128g <strong>(new, with desc_act)</strong></td>
-<td align="right">4.601023</td>
+<td align="right">4.60102</td>
 <td align="left">ExLlama</td>
 </tr>
 <tr>
