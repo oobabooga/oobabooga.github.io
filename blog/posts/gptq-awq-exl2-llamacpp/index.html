@@ -361,6 +361,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#exllama-v1-vs-exllama-v2-gptq-speed-update" class="md-nav__link">
+    ExLlama v1 vs ExLlama v2 GPTQ speed (update)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#loading-time" class="md-nav__link">
     Loading time
   </a>
@@ -519,6 +526,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#exllama-v1-vs-exllama-v2-gptq-speed-update" class="md-nav__link">
+    ExLlama v1 vs ExLlama v2 GPTQ speed (update)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#loading-time" class="md-nav__link">
     Loading time
   </a>
@@ -546,6 +560,8 @@
 
 
 <h1 id="a-detailed-comparison-between-gptq-awq-exl2-q4_k_m-q4_k_s-and-load_in_4bit-perplexity-vram-speed-model-size-and-loading-time">A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.</h1>
+<p><strong>Update 1: added a mention to GPTQ speed throught ExLlamav2, which I had not originally measured.</strong></p>
+<hr />
 <p>Many repositories and quantization methods are currently available for running large language models on consumer hardware. I wanted to get a better grasp of the strengths and weaknesses of each, so I collected the data and performed the in-depth analysis below.</p>
 <h2 id="setup">Setup</h2>
 <p>My setup is the following:</p>
@@ -823,6 +839,34 @@
 <p><img alt="download (3)" src="https://i.imgur.com/PtZeusG.png" /></p>
 <p><img alt="download (4)" src="https://i.imgur.com/f3DpdSa.png" /></p>
 <p>When it comes to evaluation speed (the speed of generating tokens after having already processed the prompt), EXL2 is the fastest. <code>load_in_4bit</code> is the slowest, followed by llama.cpp. EXL2 generates 147% more tokens/second than <code>load_in_4bit</code> and 85% more tokens/second than llama.cpp.</p>
+<h3 id="exllama-v1-vs-exllama-v2-gptq-speed-update">ExLlama v1 vs ExLlama v2 GPTQ speed (update)</h3>
+<p>I had originally measured the GPTQ speeds through ExLlama v1 only, but turboderp pointed out that GPTQ is faster on ExLlama v2, so I collected the following additional data for the model <code>llama-2-13b-hf-GPTQ-4bit-128g-actorder</code> to verify:</p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th>Prompt processing (3200 tokens, seconds)</th>
+<th>Evaluation (800 tokens, seconds)</th>
+<th>Tokens/second</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ExLlama (v1)</td>
+<td>1.85</td>
+<td>15.34</td>
+<td>52.15</td>
+</tr>
+<tr>
+<td>ExLlama (v2)</td>
+<td>1.68</td>
+<td>12.48</td>
+<td>64.10</td>
+</tr>
+</tbody>
+</table>
+<p>The prompt processing time of <code>1.68</code> seconds is identical to the previous record holder, which was <code>llama-2-13b-EXL2-4.250b</code> through ExLlamav2.</p>
+<p>Meanwhile, the evaluation time is a record holder: the previous one was <code>llama-2-13b-EXL2-4.250b</code> with <code>14.06</code> seconds. So GPTQ through ExLlamav2 is actually the model with the fastest evaluation speed of all, 13% faster than the same model on ExLlama v1.</p>
 <h3 id="loading-time">Loading time</h3>
 <p>Finally, let's look at the time to load the model:</p>
 <p><img alt="download (5)" src="https://i.imgur.com/hu2bY04.png" /></p>
