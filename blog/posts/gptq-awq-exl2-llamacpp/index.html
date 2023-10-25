@@ -546,7 +546,7 @@
 
 
 <h1 id="a-detailed-comparison-between-gptq-awq-exl2-q4_k_m-q4_k_s-and-load_in_4bit-perplexity-vram-speed-model-size-and-loading-time">A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.</h1>
-<p>Many repositories and quantization methods are currently available for running large language models on consumer hardware. I wanted to get a better grasp at the strenghts and weaknesses of each, so I collected the data and performed the in-depth analysis below.</p>
+<p>Many repositories and quantization methods are currently available for running large language models on consumer hardware. I wanted to get a better grasp of the strengths and weaknesses of each, so I collected the data and performed the in-depth analysis below.</p>
 <h2 id="setup">Setup</h2>
 <p>My setup is the following:</p>
 <ul>
@@ -794,13 +794,13 @@
 <h3 id="perplexity-vs-model-size">Perplexity vs model size</h3>
 <p>Two plots tell two complementary stories. The first one is perplexity as a function of VRAM:</p>
 <p><img alt="download" src="https://i.imgur.com/Q0N9Rja.png" /></p>
-<p>And the second one is perplexity as a function of model size on disk:</p>
+<p>The second one is perplexity as a function of model size on disk:</p>
 <p><img alt="download (1)" src="https://i.imgur.com/RLpnW2S.png" /></p>
 <h4 id="awq">AWQ</h4>
-<p>The basic question is "is it better than GPTQ?". The models have lower perplexity and smaller size on disk than their GPTQ counterparts (with the same group size), but their VRAM usages are a lot higher. So, "sort of".</p>
+<p>The basic question is "Is it better than GPTQ?". The models have lower perplexity and smaller sizes on disk than their GPTQ counterparts (with the same group size), but their VRAM usages are a lot higher. So, "sort of".</p>
 <p>If we ignore VRAM and look at the model size alone, <code>llama-2-13b-EXL2-4.650b</code> dominates <code>llama-2-13b-AWQ-4bit-32g</code> in both size and perplexity, while <code>llama-2-13b-AWQ-4bit-128g</code> and <code>llama-2-13b-EXL2-4.250b</code> are very close to each other and appear simultaneously in the <code>model size vs perplexity</code> Pareto frontier.</p>
 <h4 id="gptq">GPTQ</h4>
-<p>The next question is "is EXL2 better than GPTQ"?</p>
+<p>The next question is "Is EXL2 better than GPTQ"?</p>
 <ul>
 <li><code>llama-2-13b-EXL2-4.250b</code> has lower perplexity than <code>llama-2-13b-GPTQ-4bit-128g-actorder</code> and is smaller (on disk), but it uses more VRAM. </li>
 <li><code>llama-2-13b-EXL2-4.650b</code> has lower perplexity than <code>llama-2-13b-GPTQ-4bit-32g-actorder</code> and is smaller (on disk), but it uses more VRAM. </li>
@@ -815,7 +815,7 @@
 <h3 id="prompt-processing-speed">Prompt processing speed</h3>
 <p>Moving on to speeds:</p>
 <p><img alt="download (2)" src="https://i.imgur.com/QSmaCdb.png" /></p>
-<p>EXL2 is the fastest, followed by GPTQ through ExLlama v1. llama.cpp is the slowest, taking 2.22x longer then ExLlamav2 to process a 3200 tokens prompt.</p>
+<p>EXL2 is the fastest, followed by GPTQ through ExLlama v1. llama.cpp is the slowest, taking 2.22x longer than ExLlamav2 to process a 3200 tokens prompt.</p>
 <p>The prompt processing speeds of <code>load_in_4bit</code> and AutoAWQ are not impressive.</p>
 <h3 id="evaluation-speed">Evaluation speed</h3>
 <p>The following two plots tell the same story:</p>
