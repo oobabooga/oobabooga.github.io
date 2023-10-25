@@ -787,15 +787,15 @@
 </tbody>
 </table>
 <p>Here is the same data in image format (I find it easier to read):</p>
-<p><img alt="data" src="https://github.com/oobabooga/oobabooga.github.io/assets/112222186/bd2db09d-5828-4773-8766-563ba3700b4e" /></p>
+<p><img alt="data" src="https://i.imgur.com/YNSV5V1.png" /></p>
 <h3 id="pareto-frontiers">Pareto frontiers</h3>
 <p>The goal of every quantization method is to simultaneously minimize the size and the perplexity of the model. In this context, the concept of <em>Pareto frontier</em> becomes relevant. A model is said to be at the Pareto frontier if no other model exists with both smaller size and smaller perplexity.</p>
 <p>We can make some plots and look for Pareto frontiers to see what models are optimal.</p>
 <h3 id="perplexity-vs-model-size">Perplexity vs model size</h3>
 <p>Two plots tell two complementary stories. The first one is perplexity as a function of VRAM:</p>
-<p><img alt="download" src="https://github.com/oobabooga/oobabooga.github.io/assets/112222186/66ec5db3-3481-4edb-9682-169a4a1ba332" /></p>
+<p><img alt="download" src="https://i.imgur.com/Q0N9Rja.png" /></p>
 <p>And the second one is perplexity as a function of model size on disk:</p>
-<p><img alt="download (1)" src="https://github.com/oobabooga/oobabooga.github.io/assets/112222186/7e253cc5-bcf0-4806-82aa-f15463de2644" /></p>
+<p><img alt="download (1)" src="https://i.imgur.com/RLpnW2S.png" /></p>
 <h4 id="awq">AWQ</h4>
 <p>The basic question is "is it better than GPTQ?". The models have lower perplexity and smaller size on disk than their GPTQ counterparts (with the same group size), but their VRAM usages are a lot higher. So, "sort of".</p>
 <p>If we ignore VRAM and look at the model size alone, <code>llama-2-13b-EXL2-4.650b</code> dominates <code>llama-2-13b-AWQ-4bit-32g</code> in both size and perplexity, while <code>llama-2-13b-AWQ-4bit-128g</code> and <code>llama-2-13b-EXL2-4.250b</code> are very close to each other and appear simultaneously in the <code>model size vs perplexity</code> Pareto frontier.</p>
@@ -814,19 +814,19 @@
 <p>Overall, I am impressed with the accuracy of the llama.cpp quants. They take only a few minutes to create, vs more than 10x longer for GPTQ, AWQ, or EXL2, so I did not expect them to appear in any Pareto frontier.</p>
 <h3 id="prompt-processing-speed">Prompt processing speed</h3>
 <p>Moving on to speeds:</p>
-<p><img alt="download (2)" src="https://github.com/oobabooga/oobabooga.github.io/assets/112222186/066f5197-5172-4930-8725-62c745fd92fe" /></p>
+<p><img alt="download (2)" src="https://i.imgur.com/QSmaCdb.png" /></p>
 <p>EXL2 is the fastest, followed by GPTQ through ExLlama v1. llama.cpp is the slowest, taking 2.22x longer then ExLlamav2 to process a 3200 tokens prompt.</p>
 <p>The prompt processing speeds of <code>load_in_4bit</code> and AutoAWQ are not impressive.</p>
 <h3 id="evaluation-speed">Evaluation speed</h3>
 <p>The following two plots tell the same story:</p>
-<p><img alt="download (3)" src="https://github.com/oobabooga/oobabooga.github.io/assets/112222186/259d43e2-1f63-498e-af03-2da2b6cfaf81" /></p>
-<p><img alt="download (4)" src="https://github.com/oobabooga/oobabooga.github.io/assets/112222186/d2407240-24b0-4c0c-9dfb-0c3a79a74272" /></p>
+<p><img alt="download (3)" src="https://i.imgur.com/PtZeusG.png" /></p>
+<p><img alt="download (4)" src="https://i.imgur.com/f3DpdSa.png" /></p>
 <p>When it comes to evaluation speed (the speed of generating tokens after having already processed the prompt), EXL2 is the fastest. <code>load_in_4bit</code> is the slowest, followed by llama.cpp. EXL2 generates 147% more tokens/second than <code>load_in_4bit</code> and 85% more tokens/second than llama.cpp.</p>
 <h3 id="loading-time">Loading time</h3>
 <p>Finally, let's look at the time to load the model:</p>
-<p><img alt="download (5)" src="https://github.com/oobabooga/oobabooga.github.io/assets/112222186/e09ed15a-ba2d-40c1-91ad-1fe727b9b517" /></p>
+<p><img alt="download (5)" src="https://i.imgur.com/hu2bY04.png" /></p>
 <p><code>load_in_4bit</code> takes a lot longer because it has to read and convert the 16-bit model on the fly. It is useful to look at the plot without it:</p>
-<p><img alt="download (6)" src="https://github.com/oobabooga/oobabooga.github.io/assets/112222186/9d899e53-4ec8-47ca-a5bd-84b6d773d773" /></p>
+<p><img alt="download (6)" src="https://i.imgur.com/QGKN0u3.png" /></p>
 <p>In this case, ExLlama v1 is the fastest (the GPTQ model), and AutoAWQ is the slowest.</p>
 <hr />
 <div style="background-color: #f2f2f2; border-radius: 10px; padding: 30px; width: 400px; text-align: center; margin-left: auto; margin-right: auto; margin-top: 50px">
