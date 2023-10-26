@@ -561,6 +561,7 @@
 
 <h1 id="a-detailed-comparison-between-gptq-awq-exl2-q4_k_m-q4_k_s-and-load_in_4bit-perplexity-vram-speed-model-size-and-loading-time">A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.</h1>
 <p><strong>Update 1: added a mention to GPTQ speed throught ExLlamav2, which I had not originally measured.</strong></p>
+<p><strong>Update 2: Gerganov has created a PR on llama.cpp that optimizes the llama.cpp evaluation/processing speeds and should make the values here obsolete. See the numbers and discussion <a href="https://github.com/ggerganov/llama.cpp/pull/3776#issuecomment-1781472687">here</a>.</strong></p>
 <hr />
 <p>Many repositories and quantization methods are currently available for running large language models on consumer hardware. I wanted to get a better grasp of the strengths and weaknesses of each, so I collected the data and performed the in-depth analysis below.</p>
 <h2 id="setup">Setup</h2>
