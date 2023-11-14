@@ -14,6 +14,7 @@
         .wrapper {
             max-width: 1200px;
             margin: 0 auto;
+            text-align: center;
         }
         a {
             text-decoration: none;
@@ -57,14 +58,26 @@
         <p><a href="https://github.com/oobabooga/text-generation-webui" target="_blank">https://github.com/oobabooga/text-generation-webui</a></p>
         <p><a href="http://127.0.0.1:7860?__theme=dark" target="_blank">http://127.0.0.1:7860?__theme=dark</a></p>
         <p><a href="/blog">Blog</a></p>
-        <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'B0B5JFPBO');kofiwidget2.draw();</script> 
+        <p id="ct">Contact (for offers and partnerships): [enable js to see the email]</p>
 
         <div class="image-container">
           <img src="/welcome.png" alt="Welcome Image" style="max-width: 100%">
           <p class="subtitle">Generated with ggml-vicuna-13B-1.1-q4_0.bin (CPU)</p>
         </div>
 
+        <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'B0B5JFPBO');kofiwidget2.draw();</script> 
 
     </div>
+
+    <script>
+    function generateEmailLink() {
+        var user = "oobabooga";
+        var domain = "gmail";
+        document.getElementById("ct").innerHTML = "Contact: (for offers and partnerships): " + user + "4@" + domain + ".com";
+    }
+
+    generateEmailLink();
+    </script>
+
 </body>
 </html>
