@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>oobabooga benchmark</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        .container {
+            max-width: 1320px;
+            margin: auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border: 2px solid #aaa;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #888;
+            padding: 8px;
+            text-align: left;
+            color: #333;
+        }
+        th {
+            background-color: #ccc;
+        }
+        .title {
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 36px;
+        }
+        .comments {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-top: 2px solid #aaa;
+            border-bottom: 2px solid #aaa;
+            margin-bottom: 30px;
+        }
+        .support {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        a {
+            color: #0066cc; /* A nice shade of blue for the link */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">oobabooga benchmark</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Score</th>
+                    <th>Model</th>
+                    <th>Size</th>
+                    <th>Loader</th>
+                    <th>Additional Options</th>
+                </tr>
+            </thead>
+            <tbody>
+              <tr>
+    <td>33/48</td>
+    <td>turboderp_Llama-3-70B-Instruct-exl2_6.0bpw</td>
+    <td>70B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>33/48</td>
+    <td>turboderp_Llama-3-70B-Instruct-exl2_5.0bpw</td>
+    <td>70B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>33/48</td>
+    <td>Meta-Llama-3-70B-Instruct.Q8_0-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>33/48</td>
+    <td>Meta-Llama-3-70B-Instruct.Q4_K_M-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>31/48</td>
+    <td>oobabooga_miqu-1-70b-sf-EXL2-6.000b</td>
+    <td>70B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>31/48</td>
+    <td>miqu-1-70b.q5_K_M-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>31/48</td>
+    <td>miqu-1-70b.q4_k_m-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>30/48</td>
+    <td>turboderp_Mixtral-8x22B-Instruct-v0.1-exl2_4.0bpw</td>
+    <td>8x22B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>30/48</td>
+    <td>qwen1_5-72b-chat-q4_k_m-HF</td>
+    <td>72B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>30/48</td>
+    <td>Senku-70B-Full-Q4_K_M-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>30/48</td>
+    <td>Dracones_WizardLM-2-8x22B_exl2_4.0bpw</td>
+    <td>8x22B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>29/48</td>
+    <td>turboderp_Llama-3-70B-exl2_5.0bpw</td>
+    <td>70B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>29/48</td>
+    <td>daybreak-miqu-1-70b-v1.0-q5_k_m-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>29/48</td>
+    <td>command-r-plus-104b-iq4_xs-HF</td>
+    <td>104B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>28/48</td>
+    <td>dolphin-2.7-mixtral-8x7b.Q8_0-HF</td>
+    <td>8x7B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>28/48</td>
+    <td>command-r-plus-Q4_K_M-HF</td>
+    <td>104B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>27/48</td>
+    <td>turboderp_command-r-plus-103B-exl2_3.25bpw</td>
+    <td>104B</td>
+    <td>ExLlamav2_HF</td>
+    <td>--cache_8bit</td>
+  </tr>
+  <tr>
+    <td>27/48</td>
+    <td>mixtral-8x7b-instruct-v0.1.Q8_0-HF</td>
+    <td>8x7B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>27/48</td>
+    <td>miqu-1-70b.q2_K-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>27/48</td>
+    <td>Midnight-Miqu-70B-v1.0.Q4_K_M-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>26/48</td>
+    <td>nous-hermes-2-mixtral-8x7b-dpo.Q8_0-HF</td>
+    <td>8x7B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>26/48</td>
+    <td>Mixtral-8x22B-Instruct-v0.1.Q4_K_M-HF</td>
+    <td>8x22B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>25/48</td>
+    <td>turboderp_Llama-3-70B-Instruct-exl2_2.4bpw</td>
+    <td>70B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>25/48</td>
+    <td>goliath-120b.Q4_K_M-HF</td>
+    <td>120B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>24/48</td>
+    <td>maid-yuzu-v8-alter.Q8_0-HF</td>
+    <td>8x7B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>22/48</td>
+    <td>wizardlm-70b-v1.0.Q4_K_M-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>22/48</td>
+    <td>turboderp_command-r-v01-35B-exl2_6.0bpw</td>
+    <td>35B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>22/48</td>
+    <td>tulu-2-dpo-70b.Q4_K_M-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>22/48</td>
+    <td>liuhaotian_llava-v1.5-13b</td>
+    <td>13B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>21/48</td>
+    <td>c4ai-command-r-v01-Q8_0-HF</td>
+    <td>35B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>21/48</td>
+    <td>Undi95_Meta-Llama-3-8B-Instruct-hf</td>
+    <td>8B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>20/48</td>
+    <td>llama-2-70b-chat.Q4_K_M-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>20/48</td>
+    <td>TheBloke_llava-v1.5-13B-GPTQ</td>
+    <td>13B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>19/48</td>
+    <td>mistral-7b-instruct-v0.2.Q4_K_S-HF</td>
+    <td>7B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>19/48</td>
+    <td>llama-2-70b.Q5_K_M-HF</td>
+    <td>70B</td>
+    <td>llamacpp_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>19/48</td>
+    <td>Nexusflow_Starling-LM-7B-beta</td>
+    <td>7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>18/48</td>
+    <td>mistralai_Mistral-7B-Instruct-v0.2</td>
+    <td>7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>17/48</td>
+    <td>amazingvince_Not-WizardLM-2-7B</td>
+    <td>7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>16/48</td>
+    <td>TheBloke_Mistral-7B-Instruct-v0.2-GPTQ</td>
+    <td>7B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>15/48</td>
+    <td>CohereForAI_c4ai-command-r-v01-4bit</td>
+    <td>35B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>13/48</td>
+    <td>alpindale_gemma-7b-it</td>
+    <td>7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>12/48</td>
+    <td>NousResearch_Llama-2-13b-chat-hf</td>
+    <td>13B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>10/48</td>
+    <td>facebook_galactica-30b</td>
+    <td>30B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>9/48</td>
+    <td>microsoft_phi-2</td>
+    <td>2.7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>9/48</td>
+    <td>TheBloke_vicuna-33B-GPTQ</td>
+    <td>33B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8/48</td>
+    <td>mistralai_Mistral-7B-Instruct-v0.1</td>
+    <td>7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8/48</td>
+    <td>NousResearch_Llama-2-7b-chat-hf</td>
+    <td>7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>5/48</td>
+    <td>unsloth_llama-3-70b-bnb-4bit</td>
+    <td>70B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>5/48</td>
+    <td>TheBloke_Llama-2-13B-GPTQ</td>
+    <td>13B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>5/48</td>
+    <td>NousResearch_Llama-2-13b-hf</td>
+    <td>13B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>3/48</td>
+    <td>turboderp_dbrx-instruct-exl2_3.75bpw</td>
+    <td>132B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>3/48</td>
+    <td>TheBloke_Llama-2-7B-GPTQ</td>
+    <td>7B</td>
+    <td>ExLlamav2_HF</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>2/48</td>
+    <td>facebook_galactica-6.7b</td>
+    <td>6.7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>1/48</td>
+    <td>NousResearch_Llama-2-7b-hf</td>
+    <td>7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>0/48</td>
+    <td>gpt4chan_model_float16</td>
+    <td>6B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>0/48</td>
+    <td>facebook_galactica-125m</td>
+    <td>0.125B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>0/48</td>
+    <td>TinyLlama_TinyLlama-1.1B-Chat-v1.0</td>
+    <td>1.1B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>0/48</td>
+    <td>ISTA-DASLab_Llama-2-7b-AQLM-2Bit-1x16-hf</td>
+    <td>7B</td>
+    <td>Transformers</td>
+    <td></td>
+  </tr>
+
+            </tbody>
+        </table>
+        <div class="comments">
+            <h2>About</h2>
+            <p>This test consists of 48 manually written multiple-choice questions. It evaluates a combination of academic knowledge and logical reasoning.</p>
+            <p>Compared to MMLU, it has the advantage of not being in any training dataset, and the disadvantage of being much smaller. Compared to lmsys chatbot arena, it is harsher on small models like Starling-LM-7B-beta that write nicely formatted replies but don't have much knowledge.</p>
+            <p>The correct Jinja2 instruction template is used for each model, as autodetected by text-generation-webui from the model's metadata. For base models without a template, Alpaca is used. The questions are evaluated using the /v1/internal/logits endpoint in the project's API.</p>
+            <p>The questions are private.</p>
+        </div>
+        <div class="support">
+            <p><a href="https://ko-fi.com/oobabooga">https://ko-fi.com/oobabooga</a></p>
+        </div>
+    </div>
+</body>
+</html>
+
+
