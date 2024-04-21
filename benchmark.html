@@ -176,6 +176,8 @@
             <p>Compared to MMLU, it has the advantage of not being in any training dataset, and the disadvantage of being much smaller. Compared to lmsys chatbot arena, it is harsher on small models like Starling-LM-7B-beta that write nicely formatted replies but don't have much knowledge.</p>
             <p>The correct Jinja2 instruction template is used for each model, as autodetected by text-generation-webui from the model's metadata. For base models without a template, Alpaca is used. The questions are evaluated using the /v1/internal/logits endpoint in the project's API.</p>
             <p>The questions are private.</p>
+            <h2>Limitations</h2>
+            <p>This benchmark does not evaluate code generation, non-English languages, role-playing, RAG, and long context understanding. The performance in those areas may have a weak or nonexistent correlation with what is being measured.</p>
         </div>
         <div class="support">
             <p><a href="https://ko-fi.com/oobabooga">https://ko-fi.com/oobabooga</a></p>
