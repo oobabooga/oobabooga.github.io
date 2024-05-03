@@ -441,6 +441,7 @@
         const table = document.querySelector('table');
         const headers = table.querySelectorAll('th');
         const rows = Array.from(table.querySelectorAll('tbody tr'));
+        const inputs = []; // Store all input fields
 
         // Create input fields for searching
         headers.forEach((header, columnIndex) => {
@@ -452,18 +453,29 @@
           input.placeholder = `Search ${header.textContent}`;
           header.appendChild(input);
 
+          inputs.push(input); // Store the input field
+
           input.addEventListener('input', () => {
-            filterRows(columnIndex, input.value);
+            filterRows(); // Call filterRows without arguments
           });
         });
 
         // Function to filter rows based on input values
-        function filterRows(columnIndex, searchValue) {
-          const regex = new RegExp(searchValue, 'i'); // Create a regex with the search value
-
+        function filterRows() {
           rows.forEach((row) => {
-            const cellValue = row.cells[columnIndex].textContent;
-            const isVisible = regex.test(cellValue); // Test the regex against the cell value
+            let isVisible = true; // Assume the row is visible
+
+            inputs.forEach((input, columnIndex) => {
+              const searchValue = input.value;
+              if (searchValue!== '') { // If the input field has a value
+                const regex = new RegExp(searchValue, 'i'); // Create a regex with the search value
+                const cellValue = row.cells[columnIndex].textContent;
+
+                if (!regex.test(cellValue)) { // If the cell value doesn't match the search value
+                  isVisible = false; // Mark the row as hidden
+                }
+              }
+            });
 
             row.style.display = isVisible? '' : 'none';
           });
