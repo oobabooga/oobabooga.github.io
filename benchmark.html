@@ -432,6 +432,39 @@
             <iframe src="https://github.com/sponsors/oobabooga/button" title="Sponsor oobabooga" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
         </div>
     </div>
+    <script>
+        // Get the table and table headers
+        const table = document.querySelector('table');
+        const headers = table.querySelectorAll('th');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+        // Create input fields for searching
+        headers.forEach((header, columnIndex) => {
+          const br = document.createElement('br'); // Add a line break
+          header.appendChild(br);
+
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = `Search ${header.textContent}`;
+          header.appendChild(input);
+
+          input.addEventListener('input', () => {
+            filterRows(columnIndex, input.value);
+          });
+        });
+
+        // Function to filter rows based on input values
+        function filterRows(columnIndex, searchValue) {
+          const regex = new RegExp(searchValue, 'i'); // Create a regex with the search value
+
+          rows.forEach((row) => {
+            const cellValue = row.cells[columnIndex].textContent;
+            const isVisible = regex.test(cellValue); // Test the regex against the cell value
+
+            row.style.display = isVisible? '' : 'none';
+          });
+        }
+    </script>
 </body>
 </html>
 
