@@ -7,14 +7,14 @@
     <style>
         body {
             font-family: 'Courier New', monospace;
-            font-size: 16px;
             margin: 0;
+            padding: 20px;
             background-color: #e0e0e0;
             color: #333;
         }
-       .container {
+        .container {
             max-width: 1320px;
-            margin: 40px auto;
+            margin: auto;
             padding: 20px;
             background-color: #f0f0f0;
             border: 2px solid #aaa;
@@ -26,19 +26,20 @@
         }
         th, td {
             border: 1px solid #888;
-            padding: 0.5em;
+            padding: 8px;
             text-align: left;
             color: #333;
         }
         th {
             background-color: #ccc;
         }
-       .title {
+        .title {
             text-align: center;
-            font-size: 1.5em;
+            color: #333;
+            font-size: 24px;
             margin-bottom: 36px;
         }
-       .comments {
+        .comments {
             margin-top: 20px;
             padding: 10px;
             background-color: #f0f0f0;
@@ -46,13 +47,13 @@
             border-bottom: 2px solid #aaa;
             margin-bottom: 30px;
         }
-       .support {
+        .support {
             text-align: center;
             margin-top: 20px;
-            font-size: 1.2em;
+            font-size: 18px;
         }
         a {
-            color: #0066cc;
+            color: #0066cc; /* A nice shade of blue for the link */
             text-decoration: none;
         }
         a:hover {
@@ -61,7 +62,7 @@
         hr {
             border: none;
         }
-       .colspan-5 {
+        .colspan-5 {
             border-left: transparent;
             border-right: transparent;
         }
@@ -105,6 +106,7 @@
 <tr><td>32/48</td><td>Meta-Llama-3-70B-Instruct-IQ3_S</td><td>70B</td><td>llamacpp_HF</td><td><a href="https://huggingface.co/bartowski/Meta-Llama-3-70B-Instruct-GGUF/">[link]</a></td></tr>
 <tr><td>32/48</td><td>Meta-Llama-3-70B-Instruct-IQ2_S</td><td>70B</td><td>llamacpp_HF</td><td><a href="https://huggingface.co/bartowski/Meta-Llama-3-70B-Instruct-GGUF/">[link]</a></td></tr>
 <tr><td>32/48</td><td>Meta-Llama-3-70B-Instruct-IQ2_M</td><td>70B</td><td>llamacpp_HF</td><td><a href="https://huggingface.co/bartowski/Meta-Llama-3-70B-Instruct-GGUF/">[link]</a></td></tr>
+<tr><td>32/48</td><td>Llama-3-Giraffe-70B-Instruct.i1-Q4_K_S</td><td>70B</td><td>llamacpp_HF</td><td><a href="https://huggingface.co/mradermacher/Llama-3-Giraffe-70B-Instruct-i1-GGUF/tree/main">[link]</a></td></tr>
 <tr><td>31/48</td><td>oobabooga_miqu-1-70b-sf-EXL2-6.000b</td><td>70B</td><td>ExLlamav2_HF</td><td></td></tr>
 <tr><td>31/48</td><td>miqu-1-70b.q5_K_M</td><td>70B</td><td>llamacpp_HF</td><td></td></tr>
 <tr><td>31/48</td><td>miqu-1-70b.q4_k_m</td><td>70B</td><td>llamacpp_HF</td><td></td></tr>
@@ -345,7 +347,10 @@
         </table>
         <div class="comments">
             <h2>Updates</h2>
-            <h3>2024/05/05</h3>
+            <h3>2024/05/06</h3>
+  <ul>
+    <li><b style="color: blue">Llama-3-Giraffe-70B-Instruct.i1-Q4_K_S</b> (70B) - 32/48</li>
+  </ul><h3>2024/05/05</h3>
   <ul>
     <li><b style="color: blue">Platypus2-70B.i1-Q4_K_M</b> (70B) - 27/48</li>
     <li><b style="color: blue">LoneStriker_Yi-34B-Chat-8.0bpw-h8-exl2</b> (34B) - 29/48</li>
