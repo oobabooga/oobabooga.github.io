@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             background-color: #e0e0e0;
             color: #333;
         }
+
         .container {
             max-width: 1320px;
             margin: auto;
@@ -20,24 +22,30 @@
             border: 2px solid #aaa;
             overflow-x: scroll;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #888;
             padding: 8px;
             text-align: left;
             color: #333;
         }
-        th {
-            background-color: #ccc;
+
+        tbody tr:nth-child(even) {
+            background-color: #e0e0e0;
         }
+
         .title {
             text-align: center;
             color: #333;
             font-size: 24px;
         }
+
         .comments {
             margin-top: 20px;
             padding: 10px;
@@ -46,35 +54,45 @@
             border-bottom: 2px solid #aaa;
             margin-bottom: 30px;
         }
+
         .support {
             text-align: center;
             margin-top: 20px;
             font-size: 18px;
         }
+
         a {
-            color: #0066cc; /* A nice shade of blue for the link */
+            color: #0066cc;
+            /* A nice shade of blue for the link */
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
         }
+
         hr {
             border: none;
         }
+
         .colspan-5 {
             border-left: transparent;
             border-right: transparent;
         }
+
         th input[type="text"] {
             width: 100%;
             box-sizing: border-box;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1 class="title">oobabooga benchmark</h1>
-        <div style="text-align: center; margin-bottom: 36px"><p>The list is sorted alphabetically for each score.</p></div>
+        <div style="text-align: center; margin-bottom: 36px">
+            <p>The list is sorted alphabetically for each score.</p>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -86,7 +104,7 @@
                 </tr>
             </thead>
             <tbody>
-            <tr><td>34/48</td><td>LoneStriker_OpenBioLLM-Llama3-70B-6.0bpw-h6-exl2</td><td>70B</td><td>ExLlamav2_HF</td><td></td></tr>
+                <tr><td>34/48</td><td>LoneStriker_OpenBioLLM-Llama3-70B-6.0bpw-h6-exl2</td><td>70B</td><td>ExLlamav2_HF</td><td></td></tr>
 <tr><td>34/48</td><td>Meta-Llama-3-70B-Instruct-Q4_K_S</td><td>70B</td><td>llamacpp_HF</td><td><a href="https://huggingface.co/bartowski/Meta-Llama-3-70B-Instruct-GGUF/">[link]</a></td></tr>
 <tr><td>34/48</td><td>platypus-yi-34b.Q8_0</td><td>34B</td><td>llamacpp_HF</td><td></td></tr>
 <tr><td>33/48</td><td>01-ai_Yi-1.5-34B-Chat</td><td>34B</td><td>Transformers</td><td>--load-in-8bit</td></tr>
@@ -609,13 +627,13 @@
     <li><b style="color: blue">meraGPT_mera-mix-4x7B</b> (4x7B) - 22/48</li>
     <li><b style="color: blue">Orenguteng_Lexi-Llama-3-8B-Uncensored</b> (8B) - 18/48</li>
   </ul>
-            <h2>About</h2>
-            <p>This test consists of 48 manually written multiple-choice questions. It evaluates a combination of academic knowledge and logical reasoning.</p>
-            <p>Compared to MMLU, it has the advantage of not being in any training dataset, and the disadvantage of being much smaller. Compared to lmsys chatbot arena, it is harsher on small models like Starling-LM-7B-beta that write nicely formatted replies but don't have much knowledge.</p>
-            <p>The correct Jinja2 instruction template is used for each model, as autodetected by text-generation-webui from the model's metadata. For base models without a template, Alpaca is used. The questions are evaluated using the /v1/internal/logits endpoint in the project's API.</p>
-            <p>The questions are private.</p>
-            <h2>Limitations</h2>
-            <p>This benchmark does not evaluate code generation, non-English languages, role-playing, RAG, and long context understanding. The performance in those areas may have a weak or nonexistent correlation with what is being measured.</p>
+                <h2>About</h2>
+                <p>This test consists of 48 manually written multiple-choice questions. It evaluates a combination of academic knowledge and logical reasoning.</p>
+                <p>Compared to MMLU, it has the advantage of not being in any training dataset, and the disadvantage of being much smaller. Compared to lmsys chatbot arena, it is harsher on small models like Starling-LM-7B-beta that write nicely formatted replies but don't have much knowledge.</p>
+                <p>The correct Jinja2 instruction template is used for each model, as autodetected by text-generation-webui from the model's metadata. For base models without a template, Alpaca is used. The questions are evaluated using the /v1/internal/logits endpoint in the project's API.</p>
+                <p>The questions are private.</p>
+                <h2>Limitations</h2>
+                <p>This benchmark does not evaluate code generation, non-English languages, role-playing, RAG, and long context understanding. The performance in those areas may have a weak or nonexistent correlation with what is being measured.</p>
         </div>
         <div class="support">
             <iframe src="https://github.com/sponsors/oobabooga/button" title="Sponsor oobabooga" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
@@ -630,42 +648,43 @@
 
         // Create input fields for searching
         headers.forEach((header, columnIndex) => {
-          const br = document.createElement('br'); // Add a line break
-          header.appendChild(br);
+            const br = document.createElement('br'); // Add a line break
+            header.appendChild(br);
 
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.placeholder = `Search ${header.textContent}`;
-          header.appendChild(input);
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = `Search ${header.textContent}`;
+            header.appendChild(input);
 
-          inputs.push(input); // Store the input field
+            inputs.push(input); // Store the input field
 
-          input.addEventListener('input', () => {
-            filterRows(); // Call filterRows without arguments
-          });
+            input.addEventListener('input', () => {
+                filterRows(); // Call filterRows without arguments
+            });
         });
 
         // Function to filter rows based on input values
         function filterRows() {
-          rows.forEach((row) => {
-            let isVisible = true; // Assume the row is visible
+            rows.forEach((row) => {
+                let isVisible = true; // Assume the row is visible
 
-            inputs.forEach((input, columnIndex) => {
-              const searchValue = input.value;
-              if (searchValue!== '') { // If the input field has a value
-                const regex = new RegExp(searchValue, 'i'); // Create a regex with the search value
-                const cellValue = row.cells[columnIndex].textContent;
+                inputs.forEach((input, columnIndex) => {
+                    const searchValue = input.value;
+                    if (searchValue !== '') { // If the input field has a value
+                        const regex = new RegExp(searchValue, 'i'); // Create a regex with the search value
+                        const cellValue = row.cells[columnIndex].textContent;
 
-                if (!regex.test(cellValue)) { // If the cell value doesn't match the search value
-                  isVisible = false; // Mark the row as hidden
-                }
-              }
+                        if (!regex.test(cellValue)) { // If the cell value doesn't match the search value
+                            isVisible = false; // Mark the row as hidden
+                        }
+                    }
+                });
+
+                row.style.display = isVisible ? '' : 'none';
             });
-
-            row.style.display = isVisible? '' : 'none';
-          });
         }
     </script>
 </body>
+
 </html>
 
