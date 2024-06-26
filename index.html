@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> oobabooga.github.io </title>
     <style>
         body {
-            background-color:black;
-            margin:0;
+            background-color: black;
+            margin: 0;
             padding: 20px;
             font-family: Helvetica, sans-serif;
             color: white;
         }
+
         .wrapper {
             max-width: 1200px;
             margin: 0 auto;
             text-align: center;
         }
+
         a {
             text-decoration: none;
             font-family: sans-serif;
@@ -23,35 +26,41 @@
             font-weight: bold;
             color: #00ffff;
         }
+
         p {
             margin-bottom: 20px;
         }
+
         a:hover {
             color: #f4f4f4;
         }
+
         @media (max-width: 768px) {
             h1 {
-                font-size:2rem;
+                font-size: 2rem;
             }
+
             a {
                 font-size: 1rem;
             }
         }
+
         .image-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          margin-top: 40px;
-          margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 40px;
         }
-        
+
         /* Style for the subtitle */
         .subtitle {
-          font-style: italic;
+            font-style: italic;
         }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
         <h1>oobabooga.github.io</h1>
@@ -62,20 +71,21 @@
         <p id="ct">Contact (for offers and partnerships): [enable js to see the email]</p>
 
         <div class="image-container">
-          <img src="/welcome.png" alt="Welcome Image" style="max-width: 100%">
-          <p class="subtitle">Generated with ggml-vicuna-13B-1.1-q4_0.bin (CPU)</p>
+            <img src="/welcome.png" alt="Welcome Image" style="max-width: 100%">
+            <p class="subtitle">Generated with ggml-vicuna-13B-1.1-q4_0.bin (CPU)</p>
         </div>
     </div>
 
     <script>
-    function generateEmailLink() {
-        var user = "oobabooga";
-        var domain = "gmail";
-        document.getElementById("ct").innerHTML = "Contact: (for offers and partnerships): " + user + "4@" + domain + ".com";
-    }
+        function generateEmailLink() {
+            var user = "oobabooga";
+            var domain = "gmail";
+            document.getElementById("ct").innerHTML = "Contact: (for offers and partnerships): " + user + "4@" + domain + ".com";
+        }
 
-    generateEmailLink();
+        generateEmailLink();
     </script>
 
 </body>
+
 </html>

@@ -1,932 +1,945 @@
-
 <!doctype html>
 <html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
-        <link rel="canonical" href="https://oobabooga.github.io/blog/posts/gptq-awq-exl2-llamacpp/">
-      
-      
-        <link rel="prev" href="../../tags/">
-      
-      
-        <link rel="next" href="../perplexities/">
-      
-      
-      <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
-    
-    
-      
-        <title>A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time. - LLM blog</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.35e1ed30.min.css">
-      
-      
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
 
 
-    
-    
-      
-    
-    
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
 
-    
-    
-    
-  </head>
-  
-  
-    <body dir="ltr">
-  
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#a-detailed-comparison-between-gptq-awq-exl2-q4_k_m-q4_k_s-and-load_in_4bit-perplexity-vram-speed-model-size-and-loading-time" class="md-skip">
-          Skip to content
-        </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
+  <link rel="canonical" href="https://oobabooga.github.io/blog/posts/gptq-awq-exl2-llamacpp/">
 
-  
 
-<header class="md-header md-header--shadow" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="LLM blog" class="md-header__button md-logo" aria-label="LLM blog" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <link rel="prev" href="../../tags/">
 
+
+  <link rel="next" href="../perplexities/">
+
+
+  <link rel="icon" href="../../assets/images/favicon.png">
+  <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
+
+
+
+  <title>A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time. - LLM blog</title>
+
+
+
+  <link rel="stylesheet" href="../../assets/stylesheets/main.35e1ed30.min.css">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+  <style>
+    :root {
+      --md-text-font: "Roboto";
+      --md-code-font: "Roboto Mono"
+    }
+  </style>
+
+
+
+  <script>__md_scope = new URL("../..", location), __md_hash = e => [...e].reduce((e, _) => (e << 5) - e + _.charCodeAt(0), 0), __md_get = (e, _ = localStorage, t = __md_scope) => JSON.parse(_.getItem(t.pathname + "." + e)), __md_set = (e, _, t = localStorage, a = __md_scope) => { try { t.setItem(a.pathname + "." + e, JSON.stringify(_)) } catch (e) { } }</script>
+
+
+
+
+
+
+</head>
+
+
+<body dir="ltr">
+
+
+
+  <script>var palette = __md_get("__palette"); if (palette && "object" == typeof palette.color) for (var key of Object.keys(palette.color)) document.body.setAttribute("data-md-color-" + key, palette.color[key])</script>
+
+  <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+  <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+  <label class="md-overlay" for="__drawer"></label>
+  <div data-md-component="skip">
+
+
+    <a href="#a-detailed-comparison-between-gptq-awq-exl2-q4_k_m-q4_k_s-and-load_in_4bit-perplexity-vram-speed-model-size-and-loading-time" class="md-skip">
+      Skip to content
     </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
-            LLM blog
-          </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
-            
+
+  </div>
+  <div data-md-component="announce">
+
+  </div>
+
+
+
+
+
+
+  <header class="md-header md-header--shadow" data-md-component="header">
+    <nav class="md-header__inner md-grid" aria-label="Header">
+      <a href="../.." title="LLM blog" class="md-header__button md-logo" aria-label="LLM blog" data-md-component="logo">
+
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z" />
+        </svg>
+
+      </a>
+      <label class="md-header__button md-icon" for="__drawer">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z" />
+        </svg>
+      </label>
+      <div class="md-header__title" data-md-component="header-title">
+        <div class="md-header__ellipsis">
+          <div class="md-header__topic">
+            <span class="md-ellipsis">
+              LLM blog
+            </span>
+          </div>
+          <div class="md-header__topic" data-md-component="header-topic">
+            <span class="md-ellipsis">
+
               A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.
-            
-          </span>
+
+            </span>
+          </div>
         </div>
       </div>
-    </div>
-    
-    
-    
-    
-  </nav>
-  
-</header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
 
 
 
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="LLM blog" class="md-nav__button md-logo" aria-label="LLM blog" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
-    </a>
-    LLM blog
-  </label>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Blog
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../tags/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Tags
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Posts
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            Posts
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-    
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  <span class="md-ellipsis">
-    A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.
-  </span>
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
-    Setup
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quantizations" class="md-nav__link">
-    Quantizations
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#measurements" class="md-nav__link">
-    Measurements
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-results" class="md-nav__link">
-    The results
-  </a>
-  
-    <nav class="md-nav" aria-label="The results">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pareto-frontiers" class="md-nav__link">
-    Pareto frontiers
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#perplexity-vs-model-size" class="md-nav__link">
-    Perplexity vs model size
-  </a>
-  
-    <nav class="md-nav" aria-label="Perplexity vs model size">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#awq" class="md-nav__link">
-    AWQ
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gptq" class="md-nav__link">
-    GPTQ
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#llamacpp" class="md-nav__link">
-    llama.cpp
-  </a>
-  
-</li>
-        
-      </ul>
     </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prompt-processing-speed" class="md-nav__link">
-    Prompt processing speed
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#evaluation-speed" class="md-nav__link">
-    Evaluation speed
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#exllama-v1-vs-exllama-v2-gptq-speed-update" class="md-nav__link">
-    ExLlama v1 vs ExLlama v2 GPTQ speed (update)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#loading-time" class="md-nav__link">
-    Loading time
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
 
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../perplexities/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    A direct comparison between llama.cpp, AutoGPTQ, ExLlama, and transformers perplexities
-  </span>
-  
+  </header>
 
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-  </ul>
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
-    Setup
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quantizations" class="md-nav__link">
-    Quantizations
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#measurements" class="md-nav__link">
-    Measurements
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-results" class="md-nav__link">
-    The results
-  </a>
-  
-    <nav class="md-nav" aria-label="The results">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pareto-frontiers" class="md-nav__link">
-    Pareto frontiers
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#perplexity-vs-model-size" class="md-nav__link">
-    Perplexity vs model size
-  </a>
-  
-    <nav class="md-nav" aria-label="Perplexity vs model size">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#awq" class="md-nav__link">
-    AWQ
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gptq" class="md-nav__link">
-    GPTQ
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#llamacpp" class="md-nav__link">
-    llama.cpp
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prompt-processing-speed" class="md-nav__link">
-    Prompt processing speed
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#evaluation-speed" class="md-nav__link">
-    Evaluation speed
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#exllama-v1-vs-exllama-v2-gptq-speed-update" class="md-nav__link">
-    ExLlama v1 vs ExLlama v2 GPTQ speed (update)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#loading-time" class="md-nav__link">
-    Loading time
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-
-<h1 id="a-detailed-comparison-between-gptq-awq-exl2-q4_k_m-q4_k_s-and-load_in_4bit-perplexity-vram-speed-model-size-and-loading-time">A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.</h1>
-<p><strong>Update 1: added a mention to GPTQ speed throught ExLlamav2, which I had not originally measured.</strong></p>
-<p><strong>Update 2: Gerganov has created a PR on llama.cpp that optimizes the llama.cpp evaluation/processing speeds and should make the values here obsolete. See the numbers and discussion <a href="https://github.com/ggerganov/llama.cpp/pull/3776#issuecomment-1781472687">here</a>.</strong></p>
-<hr />
-<p>Many repositories and quantization methods are currently available for running large language models on consumer hardware. I wanted to get a better grasp of the strengths and weaknesses of each, so I collected the data and performed the in-depth analysis below.</p>
-<h2 id="setup">Setup</h2>
-<p>My setup is the following:</p>
-<ul>
-<li>CUDA: 12.1</li>
-<li>OS: Linux</li>
-<li>GPU: RTX 3090</li>
-</ul>
-<p>These are the relevant package versions:</p>
-<ul>
-<li>AutoAWQ: 0.1.4</li>
-<li>bitsandbytes: 0.41.1</li>
-<li>ExLlama: 0.0.18 (unofficial wheel by <a href="https://github.com/jllllll/exllama/">jllllll</a>)</li>
-<li>ExLlamav2: 0.0.6</li>
-<li>flash-attention: 2.3.2 (used by ExLlamav2 only)</li>
-<li>llama-cpp-python: 0.2.11</li>
-<li>transformers: 4.34</li>
-</ul>
-<h2 id="quantizations">Quantizations</h2>
-<p>I analyzed the following quantized models:</p>
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>llama-2-13b (load_in_4bit)</code></td>
-<td><code>llama-2-13b</code> in HF format loaded with <code>load_in_4bit</code> through the transformers library.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-AWQ-4bit-128g</code></td>
-<td>Created with AutoAWQ, <code>q_group_size=128</code>, <code>w_bit=4</code>, <code>zero_point=True</code>.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-AWQ-4bit-32g</code></td>
-<td>Same as above but with <code>q_group_size=32</code>.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-EXL2-4.000b</code></td>
-<td>Created with ExLlamav2, <code>bits=4</code>, <code>head_bits=6</code> (default value), <a href="https://huggingface.co/datasets/wikitext/blob/refs%2Fconvert%2Fparquet/wikitext-2-raw-v1/train/0000.parquet">wikitext-2-raw-v1</a> as the calibration file.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-EXL2-4.125b</code></td>
-<td>Same as above but with <code>bits=4.125</code>.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-EXL2-4.250b</code></td>
-<td>Same as above but with <code>bits=4.250</code>.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-EXL2-4.400b</code></td>
-<td>Same as above but with <code>bits=4.400</code>.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-EXL2-4.650b</code></td>
-<td>Same as above but with <code>bits=4.650</code>.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-EXL2-4.900b</code></td>
-<td>Same as above but with <code>bits=4.900</code>.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-GPTQ-4bit-128g-actorder</code></td>
-<td>Created with AutoGPTQ, <code>bits=4</code>, <code>group_size=128</code>, <code>desc_act=True</code>, <a href="https://huggingface.co/datasets/wikitext/blob/refs%2Fconvert%2Fparquet/wikitext-2-raw-v1/train/0000.parquet">wikitext-2-raw-v1</a> as the calibration file. Loaded through ExLlama v1.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-GPTQ-4bit-32g-actorder</code></td>
-<td>Same as above but with <code>group_size=32</code>.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-Q4_K_M.gguf</code></td>
-<td><code>q4_K_M</code> quant for llama.cpp downloaded from <a href="https://huggingface.co/TheBloke/Llama-2-13B-GGUF">TheBloke</a>.</td>
-</tr>
-<tr>
-<td><code>llama-2-13b-Q4_K_S.gguf</code></td>
-<td><code>q4_K_S</code> quant for llama.cpp downloaded from <a href="https://huggingface.co/TheBloke/Llama-2-13B-GGUF">TheBloke</a>.</td>
-</tr>
-</tbody>
-</table>
-<p>I also tried creating AWQ models with <code>zero_point=False</code>, and while that does generate an output model, it cannot be loaded in AutoAWQ (a warning appears telling you that only <code>zero_point=True</code> is supported).</p>
-<h2 id="measurements">Measurements</h2>
-<p>For perplexity tests, I used text-generation-webui with the predefined "wikitext" dataset option selected, a stride value of 512, and a context length of 4096.</p>
-<p>For VRAM tests, I loaded ExLlama and llama.cpp models with a context length of <code>1</code>. This makes the models directly comparable to the AWQ and transformers models, for which the cache is not preallocated at load time.</p>
-<p>For the speed tests, I generated 800 tokens starting from a prompt with 3200 tokens. The speeds are broken down into two:</p>
-<ul>
-<li>Prompt processing time (in seconds): time to process the 3200 tokens before starting the generation.</li>
-<li>Evaluation time (in seconds): time to generate 800 new tokens after finishing the initial processing.</li>
-</ul>
-<p>Additionally, I added a <code>tokens/second</code> column, defined as <code>800 / (evaluation time)</code>. That is, it does not take into consideration the prompt processing time.</p>
-<p>For GPTQ models, I used ExLlama (v1) as the backend for all measurements. I had <a href="https://oobabooga.github.io/blog/posts/perplexities/">previously determined</a> that it is exactly as accurate as AutoGPTQ, and it is a lot faster.</p>
-<h2 id="the-results">The results</h2>
-<p>These are the results sorted in ascending perplexity order (lower is better):</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Model</th>
-<th style="text-align: left;">Perplexity (wikitext)</th>
-<th style="text-align: right;">VRAM (GB)</th>
-<th style="text-align: right;">Model size (GB)</th>
-<th style="text-align: left;">Prompt processing time (3200 tokens)</th>
-<th style="text-align: left;">Evaluation time (800 tokens)</th>
-<th style="text-align: left;">Loading time</th>
-<th style="text-align: left;">Tokens/second</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">llama-2-13b-EXL2-4.900b</td>
-<td style="text-align: left;">4,30752</td>
-<td style="text-align: right;">9305</td>
-<td style="text-align: right;">7860</td>
-<td style="text-align: left;">1,76</td>
-<td style="text-align: left;">15,37</td>
-<td style="text-align: left;">8,12</td>
-<td style="text-align: left;">52,05</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-EXL2-4.650b</td>
-<td style="text-align: left;">4,32136</td>
-<td style="text-align: right;">9025</td>
-<td style="text-align: right;">7481</td>
-<td style="text-align: left;">1,74</td>
-<td style="text-align: left;">14,17</td>
-<td style="text-align: left;">8,20</td>
-<td style="text-align: left;">56,46</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-AWQ-4bit-32g</td>
-<td style="text-align: left;">4,32522</td>
-<td style="text-align: right;">10567</td>
-<td style="text-align: right;">7624</td>
-<td style="text-align: left;">3,60</td>
-<td style="text-align: left;">20,27</td>
-<td style="text-align: left;">11,45</td>
-<td style="text-align: left;">39,47</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-Q4_K_M.gguf</td>
-<td style="text-align: left;">4,33326</td>
-<td style="text-align: right;">8985</td>
-<td style="text-align: right;">7502</td>
-<td style="text-align: left;">3,73</td>
-<td style="text-align: left;">25,95</td>
-<td style="text-align: left;">9,90</td>
-<td style="text-align: left;">30,83</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-GPTQ-4bit-32g-actorder</td>
-<td style="text-align: left;">4,33805</td>
-<td style="text-align: right;">8701</td>
-<td style="text-align: right;">7633</td>
-<td style="text-align: left;">1,86</td>
-<td style="text-align: left;">18,85</td>
-<td style="text-align: left;">7,58</td>
-<td style="text-align: left;">42,44</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-EXL2-4.400b</td>
-<td style="text-align: left;">4,33843</td>
-<td style="text-align: right;">8591</td>
-<td style="text-align: right;">7104</td>
-<td style="text-align: left;">1,75</td>
-<td style="text-align: left;">14,12</td>
-<td style="text-align: left;">7,53</td>
-<td style="text-align: left;">56,66</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-Q4_K_S.gguf</td>
-<td style="text-align: left;">4,34246</td>
-<td style="text-align: right;">8553</td>
-<td style="text-align: right;">7071</td>
-<td style="text-align: left;">3,68</td>
-<td style="text-align: left;">22,66</td>
-<td style="text-align: left;">9,31</td>
-<td style="text-align: left;">35,30</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-AWQ-4bit-128g</td>
-<td style="text-align: left;">4,34761</td>
-<td style="text-align: right;">9623</td>
-<td style="text-align: right;">6915</td>
-<td style="text-align: left;">3,59</td>
-<td style="text-align: left;">19,70</td>
-<td style="text-align: left;">11,03</td>
-<td style="text-align: left;">40,61</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-EXL2-4.250b</td>
-<td style="text-align: left;">4,34897</td>
-<td style="text-align: right;">8339</td>
-<td style="text-align: right;">6876</td>
-<td style="text-align: left;">1,68</td>
-<td style="text-align: left;">14,06</td>
-<td style="text-align: left;">7,55</td>
-<td style="text-align: left;">56,90</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-GPTQ-4bit-128g-actorder</td>
-<td style="text-align: left;">4,35793</td>
-<td style="text-align: right;">7935</td>
-<td style="text-align: right;">6924</td>
-<td style="text-align: left;">1,85</td>
-<td style="text-align: left;">15,41</td>
-<td style="text-align: left;">6,84</td>
-<td style="text-align: left;">51,91</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b (load_in_4bit)</td>
-<td style="text-align: left;">4,36427</td>
-<td style="text-align: right;">8193</td>
-<td style="text-align: right;">24829</td>
-<td style="text-align: left;">3,01</td>
-<td style="text-align: left;">34,70</td>
-<td style="text-align: left;">20,81</td>
-<td style="text-align: left;">23,05</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-EXL2-4.125b</td>
-<td style="text-align: left;">4,36984</td>
-<td style="text-align: right;">8107</td>
-<td style="text-align: right;">6687</td>
-<td style="text-align: left;">1,69</td>
-<td style="text-align: left;">14,13</td>
-<td style="text-align: left;">7,10</td>
-<td style="text-align: left;">56,62</td>
-</tr>
-<tr>
-<td style="text-align: left;">llama-2-13b-EXL2-4.000b</td>
-<td style="text-align: left;">4,37648</td>
-<td style="text-align: right;">7883</td>
-<td style="text-align: right;">6498</td>
-<td style="text-align: left;">1,71</td>
-<td style="text-align: left;">14,09</td>
-<td style="text-align: left;">7,57</td>
-<td style="text-align: left;">56,78</td>
-</tr>
-</tbody>
-</table>
-<p>Here is the same data in image format (I find it easier to read):</p>
-<p><img alt="data" src="https://i.imgur.com/YNSV5V1.png" /></p>
-<h3 id="pareto-frontiers">Pareto frontiers</h3>
-<p>The goal of every quantization method is to simultaneously minimize the size and the perplexity of the model. In this context, the concept of <em>Pareto frontier</em> becomes relevant. A model is said to be at the Pareto frontier if no other model exists with both smaller size and smaller perplexity.</p>
-<p>We can make some plots and look for Pareto frontiers to see what models are optimal.</p>
-<h3 id="perplexity-vs-model-size">Perplexity vs model size</h3>
-<p>Two plots tell two complementary stories. The first one is perplexity as a function of VRAM:</p>
-<p><img alt="download" src="https://i.imgur.com/Q0N9Rja.png" /></p>
-<p>The second one is perplexity as a function of model size on disk:</p>
-<p><img alt="download (1)" src="https://i.imgur.com/RLpnW2S.png" /></p>
-<h4 id="awq">AWQ</h4>
-<p>The basic question is "Is it better than GPTQ?". The models have lower perplexity and smaller sizes on disk than their GPTQ counterparts (with the same group size), but their VRAM usages are a lot higher. So, "sort of".</p>
-<p>If we ignore VRAM and look at the model size alone, <code>llama-2-13b-EXL2-4.650b</code> dominates <code>llama-2-13b-AWQ-4bit-32g</code> in both size and perplexity, while <code>llama-2-13b-AWQ-4bit-128g</code> and <code>llama-2-13b-EXL2-4.250b</code> are very close to each other and appear simultaneously in the <code>model size vs perplexity</code> Pareto frontier.</p>
-<h4 id="gptq">GPTQ</h4>
-<p>The next question is "Is EXL2 better than GPTQ"?</p>
-<ul>
-<li><code>llama-2-13b-EXL2-4.250b</code> has lower perplexity than <code>llama-2-13b-GPTQ-4bit-128g-actorder</code> and is smaller (on disk), but it uses more VRAM. </li>
-<li><code>llama-2-13b-EXL2-4.650b</code> has lower perplexity than <code>llama-2-13b-GPTQ-4bit-32g-actorder</code> and is smaller (on disk), but it uses more VRAM. </li>
-</ul>
-<p>As a consequence, the 4 models above all appear in the <code>VRAM vs perplexity</code> Pareto frontier.</p>
-<h4 id="llamacpp">llama.cpp</h4>
-<ul>
-<li><code>llama-2-13b-Q4_K_S.gguf</code> appears in both Pareto frontiers, so it holds its ground. Its perplexity is between <code>llama-2-13b-EXL2-4.250b</code> and <code>llama-2-13b-EXL2-4.400b</code>. </li>
-<li><code>llama-2-13b-Q4_K_M.gguf</code> is dominated by <code>llama-2-13b-EXL2-4.650b</code> in perplexity and model size on disk, but it is not dominated in VRAM due to a 40 MB difference. As a consequence, it is in the <code>VRAM vs perplexity</code> Pareto frontier, but in a way that I would classify as borderline, as the difference in perplexity is more significant than the difference in VRAM.</li>
-</ul>
-<p>Overall, I am impressed with the accuracy of the llama.cpp quants. They take only a few minutes to create, vs more than 10x longer for GPTQ, AWQ, or EXL2, so I did not expect them to appear in any Pareto frontier.</p>
-<h3 id="prompt-processing-speed">Prompt processing speed</h3>
-<p>Moving on to speeds:</p>
-<p><img alt="download (2)" src="https://i.imgur.com/QSmaCdb.png" /></p>
-<p>EXL2 is the fastest, followed by GPTQ through ExLlama v1. llama.cpp is the slowest, taking 2.22x longer than ExLlamav2 to process a 3200 tokens prompt.</p>
-<p>The prompt processing speeds of <code>load_in_4bit</code> and AutoAWQ are not impressive.</p>
-<h3 id="evaluation-speed">Evaluation speed</h3>
-<p>The following two plots tell the same story:</p>
-<p><img alt="download (3)" src="https://i.imgur.com/PtZeusG.png" /></p>
-<p><img alt="download (4)" src="https://i.imgur.com/f3DpdSa.png" /></p>
-<p>When it comes to evaluation speed (the speed of generating tokens after having already processed the prompt), EXL2 is the fastest. <code>load_in_4bit</code> is the slowest, followed by llama.cpp. EXL2 generates 147% more tokens/second than <code>load_in_4bit</code> and 85% more tokens/second than llama.cpp.</p>
-<h3 id="exllama-v1-vs-exllama-v2-gptq-speed-update">ExLlama v1 vs ExLlama v2 GPTQ speed (update)</h3>
-<p>I had originally measured the GPTQ speeds through ExLlama v1 only, but turboderp pointed out that GPTQ is faster on ExLlama v2, so I collected the following additional data for the model <code>llama-2-13b-hf-GPTQ-4bit-128g-actorder</code> to verify:</p>
-<table>
-<thead>
-<tr>
-<th>Backend</th>
-<th>Prompt processing (3200 tokens, seconds)</th>
-<th>Evaluation (800 tokens, seconds)</th>
-<th>Tokens/second</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ExLlama (v1)</td>
-<td>1.85</td>
-<td>15.34</td>
-<td>52.15</td>
-</tr>
-<tr>
-<td>ExLlama (v2)</td>
-<td>1.68</td>
-<td>12.48</td>
-<td>64.10</td>
-</tr>
-</tbody>
-</table>
-<p>The prompt processing time of <code>1.68</code> seconds is identical to the previous record holder, which was <code>llama-2-13b-EXL2-4.250b</code> through ExLlamav2.</p>
-<p>Meanwhile, the evaluation time is a record holder: the previous one was <code>llama-2-13b-EXL2-4.250b</code> with <code>14.06</code> seconds. So GPTQ through ExLlamav2 is actually the model with the fastest evaluation speed of all, 13% faster than the same model on ExLlama v1.</p>
-<h3 id="loading-time">Loading time</h3>
-<p>Finally, let's look at the time to load the model:</p>
-<p><img alt="download (5)" src="https://i.imgur.com/hu2bY04.png" /></p>
-<p><code>load_in_4bit</code> takes a lot longer because it has to read and convert the 16-bit model on the fly. It is useful to look at the plot without it:</p>
-<p><img alt="download (6)" src="https://i.imgur.com/QGKN0u3.png" /></p>
-<p>In this case, ExLlama v1 is the fastest (the GPTQ model), and AutoAWQ is the slowest.</p>
-<hr />
-<div style="background-color: #f2f2f2; border-radius: 10px; padding: 30px; width: 400px; text-align: center; margin-left: auto; margin-right: auto; margin-top: 50px">
-  <h2 style="font-size: 24px; margin-bottom: 20px; margin-top:20px">Support My Work</h2>
-  <p style="font-size: 18px; margin-bottom: 30px;">If you appreciate what I do, consider supporting me:</p>
-  <div style="text-align:center">
-<script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'B0B5JFPBO');kofiwidget2.draw();</script>
-  </div>
-</div>
-
-<p>My LLM work has been supported by a grant from Andreessen Horowitz (a16z), to which I am very grateful.</p>
+  <div class="md-container" data-md-component="container">
 
 
 
 
 
-                
-              </article>
+
+    <main class="md-main" data-md-component="main">
+      <div class="md-main__inner md-grid">
+
+
+
+        <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+          <div class="md-sidebar__scrollwrap">
+            <div class="md-sidebar__inner">
+
+
+
+
+              <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+                <label class="md-nav__title" for="__drawer">
+                  <a href="../.." title="LLM blog" class="md-nav__button md-logo" aria-label="LLM blog" data-md-component="logo">
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z" />
+                    </svg>
+
+                  </a>
+                  LLM blog
+                </label>
+
+                <ul class="md-nav__list" data-md-scrollfix>
+
+
+
+
+
+
+                  <li class="md-nav__item">
+                    <a href="../.." class="md-nav__link">
+
+
+                      <span class="md-ellipsis">
+                        Blog
+                      </span>
+
+
+                    </a>
+                  </li>
+
+
+
+
+
+
+
+
+                  <li class="md-nav__item">
+                    <a href="../../tags/" class="md-nav__link">
+
+
+                      <span class="md-ellipsis">
+                        Tags
+                      </span>
+
+
+                    </a>
+                  </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+
+
+
+
+                    <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+
+
+                    <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+
+
+                      <span class="md-ellipsis">
+                        Posts
+                      </span>
+
+
+                      <span class="md-nav__icon md-icon"></span>
+                    </label>
+
+                    <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+                      <label class="md-nav__title" for="__nav_3">
+                        <span class="md-nav__icon md-icon"></span>
+                        Posts
+                      </label>
+                      <ul class="md-nav__list" data-md-scrollfix>
+
+
+
+
+
+
+
+
+                        <li class="md-nav__item md-nav__item--active">
+
+                          <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+
+
+
+
+
+                          <label class="md-nav__link md-nav__link--active" for="__toc">
+
+
+                            <span class="md-ellipsis">
+                              A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.
+                            </span>
+
+
+                            <span class="md-nav__icon md-icon"></span>
+                          </label>
+
+                          <a href="./" class="md-nav__link md-nav__link--active">
+
+
+                            <span class="md-ellipsis">
+                              A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.
+                            </span>
+
+
+                          </a>
+
+
+
+                          <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+
+
+
+
+
+
+                            <label class="md-nav__title" for="__toc">
+                              <span class="md-nav__icon md-icon"></span>
+                              Table of contents
+                            </label>
+                            <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+
+                              <li class="md-nav__item">
+                                <a href="#setup" class="md-nav__link">
+                                  Setup
+                                </a>
+
+                              </li>
+
+                              <li class="md-nav__item">
+                                <a href="#quantizations" class="md-nav__link">
+                                  Quantizations
+                                </a>
+
+                              </li>
+
+                              <li class="md-nav__item">
+                                <a href="#measurements" class="md-nav__link">
+                                  Measurements
+                                </a>
+
+                              </li>
+
+                              <li class="md-nav__item">
+                                <a href="#the-results" class="md-nav__link">
+                                  The results
+                                </a>
+
+                                <nav class="md-nav" aria-label="The results">
+                                  <ul class="md-nav__list">
+
+                                    <li class="md-nav__item">
+                                      <a href="#pareto-frontiers" class="md-nav__link">
+                                        Pareto frontiers
+                                      </a>
+
+                                    </li>
+
+                                    <li class="md-nav__item">
+                                      <a href="#perplexity-vs-model-size" class="md-nav__link">
+                                        Perplexity vs model size
+                                      </a>
+
+                                      <nav class="md-nav" aria-label="Perplexity vs model size">
+                                        <ul class="md-nav__list">
+
+                                          <li class="md-nav__item">
+                                            <a href="#awq" class="md-nav__link">
+                                              AWQ
+                                            </a>
+
+                                          </li>
+
+                                          <li class="md-nav__item">
+                                            <a href="#gptq" class="md-nav__link">
+                                              GPTQ
+                                            </a>
+
+                                          </li>
+
+                                          <li class="md-nav__item">
+                                            <a href="#llamacpp" class="md-nav__link">
+                                              llama.cpp
+                                            </a>
+
+                                          </li>
+
+                                        </ul>
+                                      </nav>
+
+                                    </li>
+
+                                    <li class="md-nav__item">
+                                      <a href="#prompt-processing-speed" class="md-nav__link">
+                                        Prompt processing speed
+                                      </a>
+
+                                    </li>
+
+                                    <li class="md-nav__item">
+                                      <a href="#evaluation-speed" class="md-nav__link">
+                                        Evaluation speed
+                                      </a>
+
+                                    </li>
+
+                                    <li class="md-nav__item">
+                                      <a href="#exllama-v1-vs-exllama-v2-gptq-speed-update" class="md-nav__link">
+                                        ExLlama v1 vs ExLlama v2 GPTQ speed (update)
+                                      </a>
+
+                                    </li>
+
+                                    <li class="md-nav__item">
+                                      <a href="#loading-time" class="md-nav__link">
+                                        Loading time
+                                      </a>
+
+                                    </li>
+
+                                  </ul>
+                                </nav>
+
+                              </li>
+
+                            </ul>
+
+                          </nav>
+
+                        </li>
+
+
+
+
+
+
+
+
+
+                        <li class="md-nav__item">
+                          <a href="../perplexities/" class="md-nav__link">
+
+
+                            <span class="md-ellipsis">
+                              A direct comparison between llama.cpp, AutoGPTQ, ExLlama, and transformers perplexities
+                            </span>
+
+
+                          </a>
+                        </li>
+
+
+
+
+                      </ul>
+                    </nav>
+
+                  </li>
+
+
+
+                </ul>
+              </nav>
             </div>
-          
-          
+          </div>
         </div>
-        
-      </main>
-      
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
-  
-  
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
-    </a>
-  
-</div>
-      
-    </div>
+
+
+
+        <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+          <div class="md-sidebar__scrollwrap">
+            <div class="md-sidebar__inner">
+
+
+              <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+
+
+
+
+
+
+                <label class="md-nav__title" for="__toc">
+                  <span class="md-nav__icon md-icon"></span>
+                  Table of contents
+                </label>
+                <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+
+                  <li class="md-nav__item">
+                    <a href="#setup" class="md-nav__link">
+                      Setup
+                    </a>
+
+                  </li>
+
+                  <li class="md-nav__item">
+                    <a href="#quantizations" class="md-nav__link">
+                      Quantizations
+                    </a>
+
+                  </li>
+
+                  <li class="md-nav__item">
+                    <a href="#measurements" class="md-nav__link">
+                      Measurements
+                    </a>
+
+                  </li>
+
+                  <li class="md-nav__item">
+                    <a href="#the-results" class="md-nav__link">
+                      The results
+                    </a>
+
+                    <nav class="md-nav" aria-label="The results">
+                      <ul class="md-nav__list">
+
+                        <li class="md-nav__item">
+                          <a href="#pareto-frontiers" class="md-nav__link">
+                            Pareto frontiers
+                          </a>
+
+                        </li>
+
+                        <li class="md-nav__item">
+                          <a href="#perplexity-vs-model-size" class="md-nav__link">
+                            Perplexity vs model size
+                          </a>
+
+                          <nav class="md-nav" aria-label="Perplexity vs model size">
+                            <ul class="md-nav__list">
+
+                              <li class="md-nav__item">
+                                <a href="#awq" class="md-nav__link">
+                                  AWQ
+                                </a>
+
+                              </li>
+
+                              <li class="md-nav__item">
+                                <a href="#gptq" class="md-nav__link">
+                                  GPTQ
+                                </a>
+
+                              </li>
+
+                              <li class="md-nav__item">
+                                <a href="#llamacpp" class="md-nav__link">
+                                  llama.cpp
+                                </a>
+
+                              </li>
+
+                            </ul>
+                          </nav>
+
+                        </li>
+
+                        <li class="md-nav__item">
+                          <a href="#prompt-processing-speed" class="md-nav__link">
+                            Prompt processing speed
+                          </a>
+
+                        </li>
+
+                        <li class="md-nav__item">
+                          <a href="#evaluation-speed" class="md-nav__link">
+                            Evaluation speed
+                          </a>
+
+                        </li>
+
+                        <li class="md-nav__item">
+                          <a href="#exllama-v1-vs-exllama-v2-gptq-speed-update" class="md-nav__link">
+                            ExLlama v1 vs ExLlama v2 GPTQ speed (update)
+                          </a>
+
+                        </li>
+
+                        <li class="md-nav__item">
+                          <a href="#loading-time" class="md-nav__link">
+                            Loading time
+                          </a>
+
+                        </li>
+
+                      </ul>
+                    </nav>
+
+                  </li>
+
+                </ul>
+
+              </nav>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="md-content" data-md-component="content">
+          <article class="md-content__inner md-typeset">
+
+
+
+
+            <h1 id="a-detailed-comparison-between-gptq-awq-exl2-q4_k_m-q4_k_s-and-load_in_4bit-perplexity-vram-speed-model-size-and-loading-time">A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.</h1>
+            <p><strong>Update 1: added a mention to GPTQ speed throught ExLlamav2, which I had not originally measured.</strong></p>
+            <p><strong>Update 2: Gerganov has created a PR on llama.cpp that optimizes the llama.cpp evaluation/processing speeds and should make the values here obsolete. See the numbers and discussion <a href="https://github.com/ggerganov/llama.cpp/pull/3776#issuecomment-1781472687">here</a>.</strong></p>
+            <hr />
+            <p>Many repositories and quantization methods are currently available for running large language models on consumer hardware. I wanted to get a better grasp of the strengths and weaknesses of each, so I collected the data and performed the in-depth analysis below.</p>
+            <h2 id="setup">Setup</h2>
+            <p>My setup is the following:</p>
+            <ul>
+              <li>CUDA: 12.1</li>
+              <li>OS: Linux</li>
+              <li>GPU: RTX 3090</li>
+            </ul>
+            <p>These are the relevant package versions:</p>
+            <ul>
+              <li>AutoAWQ: 0.1.4</li>
+              <li>bitsandbytes: 0.41.1</li>
+              <li>ExLlama: 0.0.18 (unofficial wheel by <a href="https://github.com/jllllll/exllama/">jllllll</a>)</li>
+              <li>ExLlamav2: 0.0.6</li>
+              <li>flash-attention: 2.3.2 (used by ExLlamav2 only)</li>
+              <li>llama-cpp-python: 0.2.11</li>
+              <li>transformers: 4.34</li>
+            </ul>
+            <h2 id="quantizations">Quantizations</h2>
+            <p>I analyzed the following quantized models:</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>llama-2-13b (load_in_4bit)</code></td>
+                  <td><code>llama-2-13b</code> in HF format loaded with <code>load_in_4bit</code> through the transformers library.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-AWQ-4bit-128g</code></td>
+                  <td>Created with AutoAWQ, <code>q_group_size=128</code>, <code>w_bit=4</code>, <code>zero_point=True</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-AWQ-4bit-32g</code></td>
+                  <td>Same as above but with <code>q_group_size=32</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-EXL2-4.000b</code></td>
+                  <td>Created with ExLlamav2, <code>bits=4</code>, <code>head_bits=6</code> (default value), <a href="https://huggingface.co/datasets/wikitext/blob/refs%2Fconvert%2Fparquet/wikitext-2-raw-v1/train/0000.parquet">wikitext-2-raw-v1</a> as the calibration file.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-EXL2-4.125b</code></td>
+                  <td>Same as above but with <code>bits=4.125</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-EXL2-4.250b</code></td>
+                  <td>Same as above but with <code>bits=4.250</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-EXL2-4.400b</code></td>
+                  <td>Same as above but with <code>bits=4.400</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-EXL2-4.650b</code></td>
+                  <td>Same as above but with <code>bits=4.650</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-EXL2-4.900b</code></td>
+                  <td>Same as above but with <code>bits=4.900</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-GPTQ-4bit-128g-actorder</code></td>
+                  <td>Created with AutoGPTQ, <code>bits=4</code>, <code>group_size=128</code>, <code>desc_act=True</code>, <a href="https://huggingface.co/datasets/wikitext/blob/refs%2Fconvert%2Fparquet/wikitext-2-raw-v1/train/0000.parquet">wikitext-2-raw-v1</a> as the calibration file. Loaded through ExLlama v1.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-GPTQ-4bit-32g-actorder</code></td>
+                  <td>Same as above but with <code>group_size=32</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-Q4_K_M.gguf</code></td>
+                  <td><code>q4_K_M</code> quant for llama.cpp downloaded from <a href="https://huggingface.co/TheBloke/Llama-2-13B-GGUF">TheBloke</a>.</td>
+                </tr>
+                <tr>
+                  <td><code>llama-2-13b-Q4_K_S.gguf</code></td>
+                  <td><code>q4_K_S</code> quant for llama.cpp downloaded from <a href="https://huggingface.co/TheBloke/Llama-2-13B-GGUF">TheBloke</a>.</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>I also tried creating AWQ models with <code>zero_point=False</code>, and while that does generate an output model, it cannot be loaded in AutoAWQ (a warning appears telling you that only <code>zero_point=True</code> is supported).</p>
+            <h2 id="measurements">Measurements</h2>
+            <p>For perplexity tests, I used text-generation-webui with the predefined "wikitext" dataset option selected, a stride value of 512, and a context length of 4096.</p>
+            <p>For VRAM tests, I loaded ExLlama and llama.cpp models with a context length of <code>1</code>. This makes the models directly comparable to the AWQ and transformers models, for which the cache is not preallocated at load time.</p>
+            <p>For the speed tests, I generated 800 tokens starting from a prompt with 3200 tokens. The speeds are broken down into two:</p>
+            <ul>
+              <li>Prompt processing time (in seconds): time to process the 3200 tokens before starting the generation.</li>
+              <li>Evaluation time (in seconds): time to generate 800 new tokens after finishing the initial processing.</li>
+            </ul>
+            <p>Additionally, I added a <code>tokens/second</code> column, defined as <code>800 / (evaluation time)</code>. That is, it does not take into consideration the prompt processing time.</p>
+            <p>For GPTQ models, I used ExLlama (v1) as the backend for all measurements. I had <a href="https://oobabooga.github.io/blog/posts/perplexities/">previously determined</a> that it is exactly as accurate as AutoGPTQ, and it is a lot faster.</p>
+            <h2 id="the-results">The results</h2>
+            <p>These are the results sorted in ascending perplexity order (lower is better):</p>
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align: left;">Model</th>
+                  <th style="text-align: left;">Perplexity (wikitext)</th>
+                  <th style="text-align: right;">VRAM (GB)</th>
+                  <th style="text-align: right;">Model size (GB)</th>
+                  <th style="text-align: left;">Prompt processing time (3200 tokens)</th>
+                  <th style="text-align: left;">Evaluation time (800 tokens)</th>
+                  <th style="text-align: left;">Loading time</th>
+                  <th style="text-align: left;">Tokens/second</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-EXL2-4.900b</td>
+                  <td style="text-align: left;">4,30752</td>
+                  <td style="text-align: right;">9305</td>
+                  <td style="text-align: right;">7860</td>
+                  <td style="text-align: left;">1,76</td>
+                  <td style="text-align: left;">15,37</td>
+                  <td style="text-align: left;">8,12</td>
+                  <td style="text-align: left;">52,05</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-EXL2-4.650b</td>
+                  <td style="text-align: left;">4,32136</td>
+                  <td style="text-align: right;">9025</td>
+                  <td style="text-align: right;">7481</td>
+                  <td style="text-align: left;">1,74</td>
+                  <td style="text-align: left;">14,17</td>
+                  <td style="text-align: left;">8,20</td>
+                  <td style="text-align: left;">56,46</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-AWQ-4bit-32g</td>
+                  <td style="text-align: left;">4,32522</td>
+                  <td style="text-align: right;">10567</td>
+                  <td style="text-align: right;">7624</td>
+                  <td style="text-align: left;">3,60</td>
+                  <td style="text-align: left;">20,27</td>
+                  <td style="text-align: left;">11,45</td>
+                  <td style="text-align: left;">39,47</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-Q4_K_M.gguf</td>
+                  <td style="text-align: left;">4,33326</td>
+                  <td style="text-align: right;">8985</td>
+                  <td style="text-align: right;">7502</td>
+                  <td style="text-align: left;">3,73</td>
+                  <td style="text-align: left;">25,95</td>
+                  <td style="text-align: left;">9,90</td>
+                  <td style="text-align: left;">30,83</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-GPTQ-4bit-32g-actorder</td>
+                  <td style="text-align: left;">4,33805</td>
+                  <td style="text-align: right;">8701</td>
+                  <td style="text-align: right;">7633</td>
+                  <td style="text-align: left;">1,86</td>
+                  <td style="text-align: left;">18,85</td>
+                  <td style="text-align: left;">7,58</td>
+                  <td style="text-align: left;">42,44</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-EXL2-4.400b</td>
+                  <td style="text-align: left;">4,33843</td>
+                  <td style="text-align: right;">8591</td>
+                  <td style="text-align: right;">7104</td>
+                  <td style="text-align: left;">1,75</td>
+                  <td style="text-align: left;">14,12</td>
+                  <td style="text-align: left;">7,53</td>
+                  <td style="text-align: left;">56,66</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-Q4_K_S.gguf</td>
+                  <td style="text-align: left;">4,34246</td>
+                  <td style="text-align: right;">8553</td>
+                  <td style="text-align: right;">7071</td>
+                  <td style="text-align: left;">3,68</td>
+                  <td style="text-align: left;">22,66</td>
+                  <td style="text-align: left;">9,31</td>
+                  <td style="text-align: left;">35,30</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-AWQ-4bit-128g</td>
+                  <td style="text-align: left;">4,34761</td>
+                  <td style="text-align: right;">9623</td>
+                  <td style="text-align: right;">6915</td>
+                  <td style="text-align: left;">3,59</td>
+                  <td style="text-align: left;">19,70</td>
+                  <td style="text-align: left;">11,03</td>
+                  <td style="text-align: left;">40,61</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-EXL2-4.250b</td>
+                  <td style="text-align: left;">4,34897</td>
+                  <td style="text-align: right;">8339</td>
+                  <td style="text-align: right;">6876</td>
+                  <td style="text-align: left;">1,68</td>
+                  <td style="text-align: left;">14,06</td>
+                  <td style="text-align: left;">7,55</td>
+                  <td style="text-align: left;">56,90</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-GPTQ-4bit-128g-actorder</td>
+                  <td style="text-align: left;">4,35793</td>
+                  <td style="text-align: right;">7935</td>
+                  <td style="text-align: right;">6924</td>
+                  <td style="text-align: left;">1,85</td>
+                  <td style="text-align: left;">15,41</td>
+                  <td style="text-align: left;">6,84</td>
+                  <td style="text-align: left;">51,91</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b (load_in_4bit)</td>
+                  <td style="text-align: left;">4,36427</td>
+                  <td style="text-align: right;">8193</td>
+                  <td style="text-align: right;">24829</td>
+                  <td style="text-align: left;">3,01</td>
+                  <td style="text-align: left;">34,70</td>
+                  <td style="text-align: left;">20,81</td>
+                  <td style="text-align: left;">23,05</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-EXL2-4.125b</td>
+                  <td style="text-align: left;">4,36984</td>
+                  <td style="text-align: right;">8107</td>
+                  <td style="text-align: right;">6687</td>
+                  <td style="text-align: left;">1,69</td>
+                  <td style="text-align: left;">14,13</td>
+                  <td style="text-align: left;">7,10</td>
+                  <td style="text-align: left;">56,62</td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">llama-2-13b-EXL2-4.000b</td>
+                  <td style="text-align: left;">4,37648</td>
+                  <td style="text-align: right;">7883</td>
+                  <td style="text-align: right;">6498</td>
+                  <td style="text-align: left;">1,71</td>
+                  <td style="text-align: left;">14,09</td>
+                  <td style="text-align: left;">7,57</td>
+                  <td style="text-align: left;">56,78</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>Here is the same data in image format (I find it easier to read):</p>
+            <p><img alt="data" src="https://i.imgur.com/YNSV5V1.png" /></p>
+            <h3 id="pareto-frontiers">Pareto frontiers</h3>
+            <p>The goal of every quantization method is to simultaneously minimize the size and the perplexity of the model. In this context, the concept of <em>Pareto frontier</em> becomes relevant. A model is said to be at the Pareto frontier if no other model exists with both smaller size and smaller perplexity.</p>
+            <p>We can make some plots and look for Pareto frontiers to see what models are optimal.</p>
+            <h3 id="perplexity-vs-model-size">Perplexity vs model size</h3>
+            <p>Two plots tell two complementary stories. The first one is perplexity as a function of VRAM:</p>
+            <p><img alt="download" src="https://i.imgur.com/Q0N9Rja.png" /></p>
+            <p>The second one is perplexity as a function of model size on disk:</p>
+            <p><img alt="download (1)" src="https://i.imgur.com/RLpnW2S.png" /></p>
+            <h4 id="awq">AWQ</h4>
+            <p>The basic question is "Is it better than GPTQ?". The models have lower perplexity and smaller sizes on disk than their GPTQ counterparts (with the same group size), but their VRAM usages are a lot higher. So, "sort of".</p>
+            <p>If we ignore VRAM and look at the model size alone, <code>llama-2-13b-EXL2-4.650b</code> dominates <code>llama-2-13b-AWQ-4bit-32g</code> in both size and perplexity, while <code>llama-2-13b-AWQ-4bit-128g</code> and <code>llama-2-13b-EXL2-4.250b</code> are very close to each other and appear simultaneously in the <code>model size vs perplexity</code> Pareto frontier.</p>
+            <h4 id="gptq">GPTQ</h4>
+            <p>The next question is "Is EXL2 better than GPTQ"?</p>
+            <ul>
+              <li><code>llama-2-13b-EXL2-4.250b</code> has lower perplexity than <code>llama-2-13b-GPTQ-4bit-128g-actorder</code> and is smaller (on disk), but it uses more VRAM. </li>
+              <li><code>llama-2-13b-EXL2-4.650b</code> has lower perplexity than <code>llama-2-13b-GPTQ-4bit-32g-actorder</code> and is smaller (on disk), but it uses more VRAM. </li>
+            </ul>
+            <p>As a consequence, the 4 models above all appear in the <code>VRAM vs perplexity</code> Pareto frontier.</p>
+            <h4 id="llamacpp">llama.cpp</h4>
+            <ul>
+              <li><code>llama-2-13b-Q4_K_S.gguf</code> appears in both Pareto frontiers, so it holds its ground. Its perplexity is between <code>llama-2-13b-EXL2-4.250b</code> and <code>llama-2-13b-EXL2-4.400b</code>. </li>
+              <li><code>llama-2-13b-Q4_K_M.gguf</code> is dominated by <code>llama-2-13b-EXL2-4.650b</code> in perplexity and model size on disk, but it is not dominated in VRAM due to a 40 MB difference. As a consequence, it is in the <code>VRAM vs perplexity</code> Pareto frontier, but in a way that I would classify as borderline, as the difference in perplexity is more significant than the difference in VRAM.</li>
+            </ul>
+            <p>Overall, I am impressed with the accuracy of the llama.cpp quants. They take only a few minutes to create, vs more than 10x longer for GPTQ, AWQ, or EXL2, so I did not expect them to appear in any Pareto frontier.</p>
+            <h3 id="prompt-processing-speed">Prompt processing speed</h3>
+            <p>Moving on to speeds:</p>
+            <p><img alt="download (2)" src="https://i.imgur.com/QSmaCdb.png" /></p>
+            <p>EXL2 is the fastest, followed by GPTQ through ExLlama v1. llama.cpp is the slowest, taking 2.22x longer than ExLlamav2 to process a 3200 tokens prompt.</p>
+            <p>The prompt processing speeds of <code>load_in_4bit</code> and AutoAWQ are not impressive.</p>
+            <h3 id="evaluation-speed">Evaluation speed</h3>
+            <p>The following two plots tell the same story:</p>
+            <p><img alt="download (3)" src="https://i.imgur.com/PtZeusG.png" /></p>
+            <p><img alt="download (4)" src="https://i.imgur.com/f3DpdSa.png" /></p>
+            <p>When it comes to evaluation speed (the speed of generating tokens after having already processed the prompt), EXL2 is the fastest. <code>load_in_4bit</code> is the slowest, followed by llama.cpp. EXL2 generates 147% more tokens/second than <code>load_in_4bit</code> and 85% more tokens/second than llama.cpp.</p>
+            <h3 id="exllama-v1-vs-exllama-v2-gptq-speed-update">ExLlama v1 vs ExLlama v2 GPTQ speed (update)</h3>
+            <p>I had originally measured the GPTQ speeds through ExLlama v1 only, but turboderp pointed out that GPTQ is faster on ExLlama v2, so I collected the following additional data for the model <code>llama-2-13b-hf-GPTQ-4bit-128g-actorder</code> to verify:</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Backend</th>
+                  <th>Prompt processing (3200 tokens, seconds)</th>
+                  <th>Evaluation (800 tokens, seconds)</th>
+                  <th>Tokens/second</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ExLlama (v1)</td>
+                  <td>1.85</td>
+                  <td>15.34</td>
+                  <td>52.15</td>
+                </tr>
+                <tr>
+                  <td>ExLlama (v2)</td>
+                  <td>1.68</td>
+                  <td>12.48</td>
+                  <td>64.10</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>The prompt processing time of <code>1.68</code> seconds is identical to the previous record holder, which was <code>llama-2-13b-EXL2-4.250b</code> through ExLlamav2.</p>
+            <p>Meanwhile, the evaluation time is a record holder: the previous one was <code>llama-2-13b-EXL2-4.250b</code> with <code>14.06</code> seconds. So GPTQ through ExLlamav2 is actually the model with the fastest evaluation speed of all, 13% faster than the same model on ExLlama v1.</p>
+            <h3 id="loading-time">Loading time</h3>
+            <p>Finally, let's look at the time to load the model:</p>
+            <p><img alt="download (5)" src="https://i.imgur.com/hu2bY04.png" /></p>
+            <p><code>load_in_4bit</code> takes a lot longer because it has to read and convert the 16-bit model on the fly. It is useful to look at the plot without it:</p>
+            <p><img alt="download (6)" src="https://i.imgur.com/QGKN0u3.png" /></p>
+            <p>In this case, ExLlama v1 is the fastest (the GPTQ model), and AutoAWQ is the slowest.</p>
+            <hr />
+            <div style="background-color: #f2f2f2; border-radius: 10px; padding: 30px; width: 400px; text-align: center; margin-left: auto; margin-right: auto; margin-top: 50px">
+              <h2 style="font-size: 24px; margin-bottom: 20px; margin-top:20px">Support My Work</h2>
+              <p style="font-size: 18px; margin-bottom: 30px;">If you appreciate what I do, consider supporting me:</p>
+              <div style="text-align:center">
+                <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+                <script type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'B0B5JFPBO'); kofiwidget2.draw();</script>
+              </div>
+            </div>
+
+            <p>My LLM work has been supported by a grant from Andreessen Horowitz (a16z), to which I am very grateful.</p>
+
+
+
+
+
+
+          </article>
+        </div>
+
+
+      </div>
+
+    </main>
+
+    <footer class="md-footer">
+
+      <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+          <div class="md-copyright">
+
+
+            Made with
+            <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+              Material for MkDocs
+            </a>
+
+          </div>
+
+        </div>
+      </div>
+    </footer>
+
   </div>
-</footer>
-      
-    </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
-    
-    
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
-    
-    
-      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
-      
-    
-  </body>
+  <div class="md-dialog" data-md-component="dialog">
+    <div class="md-dialog__inner md-typeset"></div>
+  </div>
+
+
+  <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+
+
+  <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+
+
+</body>
+
 </html>
