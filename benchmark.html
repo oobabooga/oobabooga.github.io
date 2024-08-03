@@ -850,7 +850,14 @@
 
       const input = document.createElement('input');
       input.type = 'text';
-      input.placeholder = `Search ${header.textContent}`;
+
+      // Set placeholder text, special case for 4th column
+      if (columnIndex === 3) {
+        input.placeholder = 'Maximum Size';
+      } else {
+        input.placeholder = `Search ${header.textContent}`;
+      }
+
       header.appendChild(input);
 
       inputs.push(input); // Store the input field
