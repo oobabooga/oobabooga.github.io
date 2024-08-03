@@ -838,6 +838,11 @@
     const rows = Array.from(table.querySelectorAll('tbody tr'));
     const inputs = []; // Store all input fields
 
+    // Function to parse float, considering both dot and comma as decimal separators
+    function parseFloatCustom(value) {
+      return parseFloat(value.replace(',', '.'));
+    }
+
     // Create input fields for searching
     headers.forEach((header, columnIndex) => {
       const br = document.createElement('br'); // Add a line break
@@ -861,13 +866,23 @@
         let isVisible = true; // Assume the row is visible
 
         inputs.forEach((input, columnIndex) => {
-          const searchValue = input.value;
+          const searchValue = input.value.trim();
           if (searchValue !== '') { // If the input field has a value
-            const regex = new RegExp(searchValue, 'i'); // Create a regex with the search value
-            const cellValue = row.cells[columnIndex].textContent;
+            if (columnIndex === 3) { // Special behavior for 4th column (index 3)
+              const inputFloat = parseFloatCustom(searchValue);
+              if (!isNaN(inputFloat)) {
+                const cellValue = parseFloatCustom(row.cells[columnIndex].textContent);
+                if (cellValue > inputFloat) {
+                  isVisible = false;
+                }
+              }
+            } else {
+              const regex = new RegExp(searchValue, 'i'); // Create a regex with the search value
+              const cellValue = row.cells[columnIndex].textContent;
 
-            if (!regex.test(cellValue)) { // If the cell value doesn't match the search value
-              isVisible = false; // Mark the row as hidden
+              if (!regex.test(cellValue)) { // If the cell value doesn't match the search value
+                isVisible = false; // Mark the row as hidden
+              }
             }
           }
         });
@@ -879,4 +894,3 @@
 </body>
 
 </html>
-
