@@ -1267,17 +1267,17 @@
       });
     }
 
-document.addEventListener('DOMContentLoaded', () => {
-    function findParetoFrontier() {
+    document.addEventListener('DOMContentLoaded', () => {
+      function findParetoFrontier() {
         const table = document.querySelector('table');
         const rows = Array.from(table.querySelectorAll('tbody tr'));
-        
+
         // Parse table rows to extract scores and sizes
         const models = rows.map(row => {
-            const cells = row.querySelectorAll('td');
-            const score = cells[0].textContent.split('/').map(Number)[0];
-            const size = parseFloat(cells[3].textContent);
-            return { row, score, size };
+          const cells = row.querySelectorAll('td');
+          const score = cells[0].textContent.split('/').map(Number)[0];
+          const size = parseFloat(cells[3].textContent);
+          return { row, score, size };
         });
 
         // Sort models by size in ascending order, then by score in descending order
@@ -1287,20 +1287,23 @@ document.addEventListener('DOMContentLoaded', () => {
         let maxScore = -Infinity;
 
         for (const model of models) {
-            if (model.score > maxScore) {
-                paretoFrontier.push(model);
-                maxScore = model.score;
+          if (model.score > maxScore) {
+            if (model.score > 0) {
+              paretoFrontier.push(model);
             }
+
+            maxScore = model.score;
+          }
         }
 
         // Highlight rows in the Pareto frontier
         paretoFrontier.forEach(model => {
-            model.row.style.backgroundColor = 'lightgreen';
+          model.row.style.backgroundColor = 'lightgreen';
         });
-    }
+      }
 
-    findParetoFrontier();
-});
+      findParetoFrontier();
+    });
 
   </script>
 </body>
