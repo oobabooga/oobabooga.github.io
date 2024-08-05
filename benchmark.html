@@ -122,6 +122,7 @@
     <h1 class="title">oobabooga benchmark</h1>
     <div style="text-align: center; margin-bottom: 36px">
       <p>The list is sorted by size (on disk) for each score.</p>
+      <p><span style="background-color: lightgreen; padding: 2px;">Highlighted</span> = Pareto frontier.</p>
     </div>
     <table>
       <thead>
@@ -1265,6 +1266,42 @@
         row.style.display = isVisible ? '' : 'none';
       });
     }
+
+document.addEventListener('DOMContentLoaded', () => {
+    function findParetoFrontier() {
+        const table = document.querySelector('table');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        
+        // Parse table rows to extract scores and sizes
+        const models = rows.map(row => {
+            const cells = row.querySelectorAll('td');
+            const score = cells[0].textContent.split('/').map(Number)[0];
+            const size = parseFloat(cells[3].textContent);
+            return { row, score, size };
+        });
+
+        // Sort models by size in ascending order, then by score in descending order
+        models.sort((a, b) => a.size - b.size || b.score - a.score);
+
+        const paretoFrontier = [];
+        let maxScore = -Infinity;
+
+        for (const model of models) {
+            if (model.score > maxScore) {
+                paretoFrontier.push(model);
+                maxScore = model.score;
+            }
+        }
+
+        // Highlight rows in the Pareto frontier
+        paretoFrontier.forEach(model => {
+            model.row.style.backgroundColor = 'lightgreen';
+        });
+    }
+
+    findParetoFrontier();
+});
+
   </script>
 </body>
 
