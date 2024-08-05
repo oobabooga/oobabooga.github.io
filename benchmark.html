@@ -122,7 +122,7 @@
     <h1 class="title">oobabooga benchmark</h1>
     <div style="text-align: center; margin-bottom: 36px">
       <p>The list is sorted by size (on disk) for each score.</p>
-      <p><span style="background-color: lightgreen; padding: 2px;">Highlighted</span> = Pareto frontier.</p>
+      <p><span id="highlighted-text" style="background-color: lightgreen; padding: 2px; cursor: pointer;">Highlighted</span> = Pareto frontier.</p>
     </div>
     <table>
       <thead>
@@ -1295,22 +1295,43 @@
             if (model.score > 0) {
               paretoFrontier.push(model);
             }
-
             maxScore = model.score;
           }
         }
 
         // Highlight rows in the Pareto frontier
         paretoFrontier.forEach(model => {
+          model.row.classList.add('pareto-frontier');
           model.row.style.backgroundColor = 'lightgreen';
         });
       }
 
       findParetoFrontier();
+
+      const highlightedText = document.getElementById('highlighted-text');
+      let showingPareto = false;
+
+      highlightedText.addEventListener('click', () => {
+        const table = document.querySelector('table');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+        if (showingPareto) {
+          rows.forEach(row => {
+            row.style.display = '';
+          });
+          showingPareto = false;
+        } else {
+          rows.forEach(row => {
+            if (!row.classList.contains('pareto-frontier')) {
+              row.style.display = 'none';
+            }
+          });
+          showingPareto = true;
+        }
+      });
     });
 
   </script>
 </body>
 
 </html>
-
