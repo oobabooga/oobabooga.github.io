@@ -44,10 +44,6 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
       border-radius: 8px;
       overflow: hidden;
-      position: relative;
-      z-index: 1;
-      margin-top: 0;
-      border-top-left-radius: 0;
     }
 
     th,
@@ -104,32 +100,6 @@
       box-sizing: border-box;
     }
 
-    /* Tab styling */
-    .tab-container {
-      display: flex;
-      /* Pull tabs up to overlap with table */
-      position: relative;
-      z-index: 5;
-    }
-
-    .tab-btn {
-      padding: 10px 25px;
-      background-color: #e0e0e0;
-      border-bottom: none;
-      cursor: pointer;
-      font-weight: bold;
-      position: relative;
-      transition: all 0.2s;
-      border: 0;
-    }
-
-    .tab-btn.active {
-      background-color: var(--primary-color);
-      color: white;
-      z-index: 2;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
-    }
-
     @media screen and (max-width: 768px) {
       .container {
         padding: 10px;
@@ -144,6 +114,32 @@
         padding: 10px;
       }
     }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      background-color: #e0e0e0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .tab-btn:hover:not(.active) {
+      background-color: #d0d0d0;
+    }
   </style>
 </head>
 
@@ -153,11 +149,11 @@
     <div style="text-align: center; margin-bottom: 36px">
       <p>The list is sorted by size (on disk) for each score.</p>
       <p><span id="highlighted-text" style="background-color: lightgreen; padding: 2px; cursor: pointer;">Highlighted</span> = Pareto frontier.</p>
-    </div>
 
-    <div class="tab-container">
-      <button id="tab-regular" class="tab-btn active">Regular</button>
-      <button id="tab-reasoning" class="tab-btn">Reasoning</button>
+      <div class="tabs" style="text-align: center; margin-bottom: 20px;">
+        <button id="tab-regular" class="tab-btn active">Regular</button>
+        <button id="tab-reasoning" class="tab-btn">Reasoning</button>
+      </div>
     </div>
 
     <table>
@@ -1861,3 +1857,4 @@
 </body>
 
 </html>
+
