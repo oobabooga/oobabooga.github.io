@@ -114,6 +114,30 @@
         padding: 10px;
       }
     }
+    .tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tab-btn {
+  padding: 8px 20px;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.tab-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.tab-btn:hover:not(.active) {
+  background-color: #d0d0d0;
+}
   </style>
 </head>
 
@@ -123,6 +147,10 @@
     <div style="text-align: center; margin-bottom: 36px">
       <p>The list is sorted by size (on disk) for each score.</p>
       <p><span id="highlighted-text" style="background-color: lightgreen; padding: 2px; cursor: pointer;">Highlighted</span> = Pareto frontier.</p>
+      <div class="tabs" style="text-align: center; margin-bottom: 20px;">
+  <button id="tab-regular" class="tab-btn active">Regular</button>
+  <button id="tab-reasoning" class="tab-btn">Reasoning</button>
+</div>
     </div>
     <table>
       <thead>
@@ -1742,6 +1770,104 @@
       });
     });
 
+    // Variable to track active tab
+let activeTab = 'regular';
+
+// Add tab switching functionality
+document.addEventListener('DOMContentLoaded', () => {
+  const tabRegular = document.getElementById('tab-regular');
+  const tabReasoning = document.getElementById('tab-reasoning');
+
+  tabRegular.addEventListener('click', () => {
+    setActiveTab('regular');
+  });
+
+  tabReasoning.addEventListener('click', () => {
+    setActiveTab('reasoning');
+  });
+
+  // Set initial tab
+  setActiveTab('regular');
+});
+
+function setActiveTab(tab) {
+  activeTab = tab;
+
+  // Update UI
+  document.getElementById('tab-regular').classList.toggle('active', tab === 'regular');
+  document.getElementById('tab-reasoning').classList.toggle('active', tab === 'reasoning');
+
+  // Filter the rows based on the active tab
+  filterTabRows();
+}
+
+// Extend the existing filter function to also respect the tab filter
+function filterTabRows() {
+  rows.forEach((row) => {
+    const additionalInfo = row.cells[5].textContent; // "Additional info" column
+    const matchesReasoning = additionalInfo.includes('Breaking the rules and allowing the model to generate');
+
+    // Determine if row should be shown based on active tab
+    let isVisible = (activeTab === 'reasoning' && matchesReasoning) ||
+                    (activeTab === 'regular' && !matchesReasoning);
+
+    // Apply existing filters if the row should be visible
+    if (isVisible) {
+      // Check existing filters from input fields
+      inputs.forEach((input, columnIndex) => {
+        const searchValue = input.value.trim();
+        if (searchValue !== '') {
+          if (columnIndex === 3) { // Size column
+            const inputFloat = parseFloatCustom(searchValue);
+            if (!isNaN(inputFloat)) {
+              const cellValue = parseFloatCustom(row.cells[columnIndex].textContent);
+              if (cellValue > inputFloat) {
+                isVisible = false;
+              }
+            }
+          } else {
+            const regex = new RegExp(searchValue, 'i');
+            const cellValue = row.cells[columnIndex].textContent;
+            if (!regex.test(cellValue)) {
+              isVisible = false;
+            }
+          }
+        }
+      });
+    }
+
+    row.style.display = isVisible ? '' : 'none';
+  });
+}
+
+// Modify the existing input event handlers to call both filters
+inputs.forEach(input => {
+  input.addEventListener('input', () => {
+    filterTabRows(); // Call our combined filter function
+  });
+});
+
+// Modify the highlighted-text click handler to work with tabs
+const originalHighlightedTextClick = document.getElementById('highlighted-text').onclick;
+document.getElementById('highlighted-text').onclick = function() {
+  showingPareto = !showingPareto;
+
+  if (showingPareto) {
+    rows.forEach(row => {
+      const additionalInfo = row.cells[5].textContent;
+      const matchesReasoning = additionalInfo.includes('Breaking the rules and allowing the model to generate');
+
+      // Only show if row matches active tab AND is in Pareto frontier
+      const matchesTab = (activeTab === 'reasoning' && matchesReasoning) ||
+                        (activeTab === 'regular' && !matchesReasoning);
+
+      row.style.display = (row.classList.contains('pareto-frontier') && matchesTab) ? '' : 'none';
+    });
+  } else {
+    // Return to normal tab filtering
+    filterTabRows();
+  }
+};
   </script>
 </body>
 
