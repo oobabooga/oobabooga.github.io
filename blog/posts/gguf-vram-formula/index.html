@@ -1,0 +1,620 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://oobabooga.github.io/blog/posts/gguf-vram-formula/">
+      
+      
+        <link rel="prev" href="../../tags/">
+      
+      
+        <link rel="next" href="../gptq-awq-exl2-llamacpp/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
+    
+    
+      
+        <title>A formula that predicts GGUF VRAM usage from GPU layers and context length - oobabooga blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.35e1ed30.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#a-formula-that-predicts-gguf-vram-usage-from-gpu-layers-and-context-length" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="oobabooga blog" class="md-header__button md-logo" aria-label="oobabooga blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            oobabooga blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              A formula that predicts GGUF VRAM usage from GPU layers and context length
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="oobabooga blog" class="md-nav__button md-logo" aria-label="oobabooga blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    oobabooga blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tags
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Posts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Posts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    A formula that predicts GGUF VRAM usage from GPU layers and context length
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    A formula that predicts GGUF VRAM usage from GPU layers and context length
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#initial-hypothesis" class="md-nav__link">
+    Initial hypothesis
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gathering-data" class="md-nav__link">
+    Gathering data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trying-the-initial-hypothesis" class="md-nav__link">
+    Trying the initial hypothesis
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#brute-forcing-it" class="md-nav__link">
+    Brute forcing it
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#not-just-scores-useful-in-practice" class="md-nav__link">
+    Not just scores: useful in practice
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#huggingface-space" class="md-nav__link">
+    HuggingFace Space
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gptq-awq-exl2-llamacpp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    A detailed comparison between GPTQ, AWQ, EXL2, q4_K_M, q4_K_S, and load_in_4bit: perplexity, VRAM, speed, model size, and loading time.
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../perplexities/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    A direct comparison between llama.cpp, AutoGPTQ, ExLlama, and transformers perplexities
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#initial-hypothesis" class="md-nav__link">
+    Initial hypothesis
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gathering-data" class="md-nav__link">
+    Gathering data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trying-the-initial-hypothesis" class="md-nav__link">
+    Trying the initial hypothesis
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#brute-forcing-it" class="md-nav__link">
+    Brute forcing it
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#not-just-scores-useful-in-practice" class="md-nav__link">
+    Not just scores: useful in practice
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#huggingface-space" class="md-nav__link">
+    HuggingFace Space
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="a-formula-that-predicts-gguf-vram-usage-from-gpu-layers-and-context-length">A formula that predicts GGUF VRAM usage from GPU layers and context length</h1>
+<p>In llama.cpp, there are two main parameters that you typically have to set before loading a model:</p>
+<ul>
+<li>The number of GPU layers: <code>gpu-layers</code></li>
+<li>The context length: <code>ctx-size</code></li>
+</ul>
+<p>If the model is too large for your GPU and you set either value too high, llama.cpp will throw an out-of-memory error while loading the model and crash.</p>
+<h2 id="initial-hypothesis">Initial hypothesis</h2>
+<p>Intuitively, the VRAM usage of a model should be close to its size on disk when fully offloaded to the GPU. I wondered if good prediction accuracy could be obtained through something like:</p>
+<pre><code>VRAM = gpu_layers / n_layers * size_on_disk + (term proportional to ctx_size)
+</code></pre>
+<h2 id="gathering-data">Gathering data</h2>
+<p>To test this, I downloaded a total of 60 different quants for models across a wide range of families, namely:</p>
+<ul>
+<li>c4ai-command-r-v01: <code>Q3_K_L</code> / <code>Q8_0</code></li>
+<li>CohereForAI_c4ai-command-a-03-2025: <code>IQ2_XS</code></li>
+<li>DeepSeek-R1-Distill-Llama-8B: <code>IQ3_M</code> / <code>Q5_K_L</code></li>
+<li>DeepSeek-R1-Distill-Qwen-14B: <code>IQ2_M</code> / <code>Q2_K_L</code></li>
+<li>DeepSeek-R1-Distill-Qwen-1.5B: <code>Q4_1</code> / <code>Q4_K_M</code></li>
+<li>DeepSeek-R1-Distill-Qwen-32B: <code>Q3_K_M</code> / <code>Q4_K_M</code></li>
+<li>DeepSeek-R1-Distill-Qwen-7B: <code>IQ3_XS</code> / <code>Q6_K</code></li>
+<li>google_gemma-3-12b-it: <code>IQ3_XS</code> / <code>IQ3_XXS</code></li>
+<li>google_gemma-3-1b-it: <code>IQ3_XXS</code> / <code>Q3_K_XL</code></li>
+<li>google_gemma-3-27b-it: <code>IQ3_M</code> / <code>Q5_K_L</code></li>
+<li>google_gemma-3-4b-it: <code>IQ3_M</code> / <code>Q5_K_M</code></li>
+<li>ibm-granite_granite-3.3-2b-instruct: <code>Q4_K_S</code> / <code>Q8_0</code></li>
+<li>ibm-granite_granite-3.3-8b-instruct: <code>IQ3_M</code> / <code>Q5_K_L</code></li>
+<li>Llama-3.2-1B-Instruct: <code>Q3_K_L</code> / <code>Q6_K_L</code></li>
+<li>Llama-3.2-3B-Instruct: <code>Q5_K_M</code> / <code>Q6_K_L</code></li>
+<li>Meta-Llama-3.1-70B-Instruct: <code>Q3_K_S</code></li>
+<li>meta-llama_Llama-4-Scout-17B-16E-Instruct: <code>IQ3_M</code></li>
+<li>microsoft_Phi-4-mini-instruct: <code>IQ3_M</code> / <code>IQ3_XXS</code></li>
+<li>Mistral-7B-Instruct-v0.3: <code>Q3_K_S</code> / <code>Q5_K_S</code></li>
+<li>mistralai_Mistral-Small-3.1-24B-Instruct-2503: <code>Q2_K</code> / <code>Q3_K_S</code></li>
+<li>Mistral-Nemo-Instruct-2407: <code>IQ3_XS</code> / <code>Q5_K_L</code></li>
+<li>Mixtral-8x22B-v0.1: <code>IQ3_M</code></li>
+<li>Phi-3-mini-4k-instruct: <code>IQ1_S</code> / <code>IQ2_S</code></li>
+<li>phi-4: <code>IQ4_NL</code> / <code>Q2_K_L</code></li>
+<li>Qwen_Qwen3-0.6B: <code>Q3_K_S</code> / <code>Q3_K_XL</code></li>
+<li>Qwen_Qwen3-14B: <code>Q5_K_L</code> / <code>Q5_K_M</code></li>
+<li>Qwen_Qwen3-1.7B: <code>Q4_K_L</code> / <code>Q6_K</code></li>
+<li>Qwen_Qwen3-30B-A3B: <code>IQ2_XS</code> / <code>Q6_K_L</code></li>
+<li>Qwen_Qwen3-32B: <code>IQ3_M</code> / <code>Q4_0</code></li>
+<li>Qwen_Qwen3-4B: <code>IQ3_M</code> / <code>IQ3_XS</code></li>
+<li>Qwen_Qwen3-8B: <code>IQ3_M</code> / <code>Q5_K_L</code></li>
+<li>THUDM_GLM-4-32B-0414: <code>IQ2_XS</code> / <code>Q3_K_M</code></li>
+</ul>
+<p>Note that this list includes both dense and MoE models.</p>
+<p>For each quant, I loaded the model through llama.cpp using:</p>
+<ul>
+<li>Several combinations of <code>gpu-layers</code>, from 0 to the model's maximum</li>
+<li>Several combinations of <code>ctx-size</code>, from 512 to 131,072</li>
+<li>3 cache quantization options: <code>fp16</code>, <code>q8_0</code>, and <code>q4_0</code></li>
+</ul>
+<p>I then measured the VRAM usage for each combination, for a total of 19,517 VRAM measurements. (If you're wondering, yes, it took me several days to measure all this.)</p>
+<h2 id="trying-the-initial-hypothesis">Trying the initial hypothesis</h2>
+<p>With the data in hand, I started making some plots. The results were not good.</p>
+<p>For instance, if we plot the initial hypothesis for some models, we get:</p>
+<p><img alt="Initial Hypothesis Results" src="../images/gguf-vram-formula/initial_hypothesis_2x2.png" /></p>
+<p>Even when we add simple terms proportional to <code>ctx-size</code>, it still doesn't work well:</p>
+<p><img alt="Context Terms Plot" src="../images/gguf-vram-formula/context_terms_plot.png" /></p>
+<p>So it was not as easy as I expected.</p>
+<h2 id="brute-forcing-it">Brute forcing it</h2>
+<p>Under the assumption that the VRAM usage <em>can't be random</em>, I expanded my table with every metadata value in the GGUF files that could potentially be relevant for making predictions. My table ended up looking like this:</p>
+<pre><code>gguf_file,gpu_layers,ctx_size,cache_type,n_layers,n_kv_heads,embedding_dim,feed_forward_dim,context_length,size_in_mb,vram_usage_mib
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,0,512,16,40,8,4096,12800,131072,3565.532257080078,888
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,5,512,16,40,8,4096,12800,131072,3565.532257080078,1338
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,10,512,16,40,8,4096,12800,131072,3565.532257080078,1770
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,15,512,16,40,8,4096,12800,131072,3565.532257080078,2202
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,20,512,16,40,8,4096,12800,131072,3565.532257080078,2634
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,25,512,16,40,8,4096,12800,131072,3565.532257080078,3066
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,30,512,16,40,8,4096,12800,131072,3565.532257080078,3496
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,35,512,16,40,8,4096,12800,131072,3565.532257080078,3928
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,40,512,16,40,8,4096,12800,131072,3565.532257080078,4394
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,0,1024,16,40,8,4096,12800,131072,3565.532257080078,914
+ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,5,1024,16,40,8,4096,12800,131072,3565.532257080078,1352
+</code></pre>
+<p>(The <code>cache_type</code> column uses 16 for fp16, 8 for q8_0, and 4 for q4_0)</p>
+<p>Now I needed to turn that table into a model like:</p>
+<pre><code>VRAM = f(all these 9 variables)
+</code></pre>
+<p>The technique to find a formula when you don't know anything about it is called <strong>symbolic regression</strong>. I used <a href="https://turingbotsoftware.com/">TuringBot</a> (a commercial symbolic regression tool) to make this search.</p>
+<p>I split 80% of the dataset for training and 20% for validation, and ended up with the following formula after a search that considered over 1 billion formulas over several days:</p>
+<pre><code>vram = (
+    (size_per_layer - 21.19195204848197)
+    * exp(0.0001047328491557063 * size_in_mb * smaller(ffn_per_embedding, 2.671096993407845))
+    + 0.0006621544775632052 * context_per_layer
+    + 3.34664386576376e-05 * kv_cache_factor
+) * (1.363306170123392 + gpu_layers) + 1255.163594536052
+</code></pre>
+<p>where I defined</p>
+<pre><code class="language-python">size_per_layer = size_in_mb / n_layers
+context_per_layer = context_length / n_layers
+ffn_per_embedding = feed_forward_dim / embedding_dim
+kv_cache_factor = n_kv_heads * cache_type * ctx_size
+</code></pre>
+<p>and where</p>
+<pre><code class="language-python">smaller(x, y) = 1 if x &lt; y else 0
+</code></pre>
+<p>The median absolute error for this formula across all measurements is <strong>242 MiB</strong>!</p>
+<p>Here is a plot demonstrating its accuracy for an example model:</p>
+<p><img alt="Formula Accuracy" src="../images/gguf-vram-formula/formula_accuracy_plot.png" /></p>
+<h2 id="not-just-scores-useful-in-practice">Not just scores: useful in practice</h2>
+<p>Given an amount of free VRAM, the formula above can be used to predict <code>gpu-layers</code> such that you can be <strong>95% confident that the model will load</strong>, while using close to the maximum available VRAM.</p>
+<p>To achieve this 95% confidence, I analyzed the prediction errors and found that adding a safety buffer of 906 MB ensures the model loads successfully 95% of the time. This accounts for the small variations between predicted and actual VRAM usage.</p>
+<p>I have incorporated these findings into <a href="http://github.com/oobabooga/text-generation-webui">text-generation-webui</a>, and now the project automatically sets <code>gpu-layers</code> for every GGUF model if you have an NVIDIA GPU (based on the free VRAM reported by <code>nvidia-smi</code>).</p>
+<p>As an anecdote, before I had this formula, it took me ages to find that the optimal number of layers for <code>Qwen3-235B-A22B-UD-Q2_K_XL</code> on my hardware was 77 (32,768 context, 8-bit cache). Meanwhile, the formula predicted exactly 77 immediately!</p>
+<h2 id="huggingface-space">HuggingFace Space</h2>
+<p>You can try the formula with any GGUF model on HuggingFace on the page below:</p>
+<p><strong><a href="https://huggingface.co/spaces/oobabooga/accurate-gguf-vram-calculator">Accurate GGUF VRAM Calculator</a></strong></p>
+<p>There you can just paste the link to a GGUF model, click Load, and mess around with the context length, GPU layers, and cache quantization to see the predicted VRAM usage.</p>
+<hr />
+<p>You're welcome to use this formula in your projects if you find it useful! A link back to this blog post for attribution would be appreciated :)</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+    
+  </body>
+</html>
