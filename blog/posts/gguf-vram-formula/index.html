@@ -558,7 +558,7 @@ embedding_per_context = embedding_dim / ctx_size
 <p><img alt="Formula Accuracy" src="../images/gguf-vram-formula/formula_accuracy_plot.png" /></p>
 <h2 id="not-just-scores-useful-in-practice">Not just scores: useful in practice</h2>
 <p>Given an amount of free VRAM, the formula above can be used to predict <code>gpu-layers</code> such that you can be <strong>95% confident that the model will load</strong>, while using close to the maximum available VRAM.</p>
-<p>To achieve this 95% confidence, I analyzed the prediction errors and found that adding a safety buffer of 906 MB ensures the model loads successfully 95% of the time. This accounts for the small variations between predicted and actual VRAM usage.</p>
+<p>To achieve this 95% confidence, I analyzed the prediction errors and found that adding a safety buffer of 577 MB ensures the model loads successfully 95% of the time. This accounts for the small variations between predicted and actual VRAM usage.</p>
 <p>I have incorporated these findings into <a href="http://github.com/oobabooga/text-generation-webui">text-generation-webui</a>, and now the project automatically sets <code>gpu-layers</code> for every GGUF model if you have an NVIDIA GPU (based on the free VRAM reported by <code>nvidia-smi</code>).</p>
 <p>As an anecdote, before I had this formula, it took me ages to find that the optimal number of layers for <code>Qwen3-235B-A22B-UD-Q2_K_XL</code> on my hardware was 77 (32,768 context, 8-bit cache). Meanwhile, the formula predicted exactly 77 immediately!</p>
 <h2 id="huggingface-space">HuggingFace Space</h2>
