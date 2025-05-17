@@ -543,22 +543,17 @@ ibm-granite_granite-3.3-8b-instruct-IQ3_M.gguf,5,1024,16,40,8,4096,12800,131072,
 <p>The technique to find a formula when you don't know anything about it is called <strong>symbolic regression</strong>. I used <a href="https://turingbotsoftware.com/">TuringBot</a> (a commercial symbolic regression tool) to make this search.</p>
 <p>I split 80% of the dataset for training and 20% for validation, and ended up with the following formula after a search that considered over 1 billion formulas over several days:</p>
 <pre><code>vram = (
-    (size_per_layer - 21.19195204848197)
-    * exp(0.0001047328491557063 * size_in_mb * smaller(ffn_per_embedding, 2.671096993407845))
-    + 0.0006621544775632052 * context_per_layer
-    + 3.34664386576376e-05 * kv_cache_factor
-) * (1.363306170123392 + gpu_layers) + 1255.163594536052
+    (size_per_layer - 17.99552795246051 + 3.148552680382576e-05 * kv_cache_factor)
+    * (gpu_layers + max(0.9690636483914102, cache_type - (floor(50.77817218646521 * embedding_per_context) + 9.987899908205632)))
+    + 1516.522943869404
+)
 </code></pre>
 <p>where I defined</p>
 <pre><code class="language-python">size_per_layer = size_in_mb / n_layers
-context_per_layer = context_length / n_layers
-ffn_per_embedding = feed_forward_dim / embedding_dim
 kv_cache_factor = n_kv_heads * cache_type * ctx_size
+embedding_per_context = embedding_dim / ctx_size
 </code></pre>
-<p>and where</p>
-<pre><code class="language-python">smaller(x, y) = 1 if x &lt; y else 0
-</code></pre>
-<p>The median absolute error for this formula across all measurements is <strong>242 MiB</strong>!</p>
+<p>The median absolute error for this formula across all measurements is <strong>365 MiB</strong>!</p>
 <p>Here is a plot demonstrating its accuracy for an example model:</p>
 <p><img alt="Formula Accuracy" src="../images/gguf-vram-formula/formula_accuracy_plot.png" /></p>
 <h2 id="not-just-scores-useful-in-practice">Not just scores: useful in practice</h2>
